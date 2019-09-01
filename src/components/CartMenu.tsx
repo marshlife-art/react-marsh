@@ -17,15 +17,13 @@ export const MenuLink = styled(StyledLink)`
   }
 `
 
-interface UserMenuProps {
-  userService: UserService
-}
+interface CartMenuProps {}
 
 interface DispatchProps {
   logout: () => void
 }
 
-const UserMenu = (props: UserMenuProps & DispatchProps) => {
+const CartMenu = (props: CartMenuProps & DispatchProps) => {
   // const [open, setOpen] = useState(false)
 
   return (
@@ -37,25 +35,10 @@ const UserMenu = (props: UserMenuProps & DispatchProps) => {
         { type: 'slideLeft', size: 'xlarge', duration: 150 }
       ]}
     >
-      {props.userService.user && props.userService.user.name ? (
-        <>
-          {props.userService.user.roles &&
-            props.userService.user.roles.includes('_admin') && (
-              <MenuLink to="/admin" color="dark-1">
-                <Box pad={{ horizontal: 'medium', vertical: 'small' }}>
-                  admin
-                </Box>
-              </MenuLink>
-            )}
-          <MenuLink to="/" onClick={() => props.logout()} color="dark-1">
-            <Box pad={{ horizontal: 'medium', vertical: 'small' }}>logout</Box>
-          </MenuLink>
-        </>
-      ) : (
-        <MenuLink to="/login" color="dark-1">
-          <Box pad={{ horizontal: 'medium', vertical: 'small' }}>login</Box>
-        </MenuLink>
-      )}
+      <Box pad={{ horizontal: 'medium', vertical: 'small' }}>CART</Box>
+      <MenuLink to="/login" color="dark-1">
+        <Box pad={{ horizontal: 'medium', vertical: 'small' }}>login</Box>
+      </MenuLink>
     </Box>
   )
 }
@@ -71,4 +54,4 @@ const mapDispatchToProps = (
 export default connect(
   undefined,
   mapDispatchToProps
-)(UserMenu)
+)(CartMenu)

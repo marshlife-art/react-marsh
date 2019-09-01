@@ -1,11 +1,10 @@
 import React from 'react'
-import { Anchor, Box } from 'grommet'
+import { Box, Text } from 'grommet'
 
 export function Admin() {
   return (
-    <Box pad={{ horizontal: 'medium', vertical: 'small' }}>
-      admin component
-      <Anchor href="#" label="zomg" />
+    <Box gridArea="main" justify="center" align="center">
+      <Text>main</Text>
     </Box>
   )
 }
