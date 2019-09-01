@@ -26,8 +26,6 @@ interface DispatchProps {
 }
 
 const UserMenu = (props: UserMenuProps & DispatchProps) => {
-  // const [open, setOpen] = useState(false)
-
   return (
     <Box
       gridArea="sidebar"
