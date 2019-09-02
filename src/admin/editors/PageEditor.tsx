@@ -21,7 +21,7 @@ function PageEditor(props: PageEditorProps) {
     setDoSave
   } = props
   return (
-    <>
+    <Box pad={{ horizontal: 'medium', bottom: 'small' }} fill>
       <Box
         direction="row"
         align="center"
@@ -67,7 +67,7 @@ function PageEditor(props: PageEditorProps) {
       />
 
       <Box
-        pad={{ horizontal: 'medium', bottom: 'medium' }}
+        pad={{ horizontal: 'medium', top: 'small' }}
         align="end"
         justify="center"
         direction="column"
@@ -77,7 +77,7 @@ function PageEditor(props: PageEditorProps) {
           {putDocResult.status === 'error' && putDocResult.error}
         </Text>
       </Box>
-    </>
+    </Box>
   )
 }
 

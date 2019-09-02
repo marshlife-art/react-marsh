@@ -112,11 +112,7 @@ export function Admin() {
             </>
           )}
         </Box>
-        <Box
-          gridArea="main"
-          pad={{ horizontal: 'medium', bottom: 'small' }}
-          fill
-        >
+        <Box gridArea="main" fill>
           {collection === 'pages' && selectedPage && (
             <PageEditor
               setSelectedPage={setSelectedPage}
