@@ -61,6 +61,7 @@ const App: React.FC<Props> = (props: Props) => {
               { name: 'main', start: [0, 1], end: [0, 1] },
               { name: 'sidebar', start: [1, 1], end: [1, 1] }
             ]}
+            style={{ minHeight: '100vh' }}
           >
             <Box
               gridArea="header"
@@ -125,7 +126,8 @@ const App: React.FC<Props> = (props: Props) => {
               gridArea="main"
               justify="center"
               align="center"
-              style={{ minHeight: 'calc(100vh - 54px)' }}
+              // style={{ minHeight: 'calc(100vh - 54px)' }}
+              fill
             >
               <Switch>
                 <Route exact path="/" component={Landing} />
