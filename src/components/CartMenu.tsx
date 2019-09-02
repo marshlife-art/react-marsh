@@ -1,7 +1,7 @@
 import React from 'react'
 // import { ThunkDispatch } from 'redux-thunk'
 // import { connect } from 'react-redux'
-import styled from 'styled-components'
+// import styled from 'styled-components'
 import { Box } from 'grommet'
 
 // import { StyledLink } from './StyledLink'
@@ -32,7 +32,16 @@ const CartMenu = () => {
         { type: 'slideLeft', size: 'xlarge', duration: 150 }
       ]}
     >
-      <Box pad={{ horizontal: 'medium', vertical: 'small' }}>CART</Box>
+      <Box
+        pad={{ horizontal: 'medium', vertical: 'small' }}
+        border={{
+          side: 'right',
+          color: 'border',
+          size: 'large'
+        }}
+      >
+        CART
+      </Box>
     </Box>
   )
 }

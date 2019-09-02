@@ -7,9 +7,9 @@ import {
 } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
-import { Grommet, Box, Grid, Button, Text } from 'grommet'
+import { Grommet, Box, Grid, Button, Text, Stack } from 'grommet'
 import { grommet } from 'grommet/themes'
-import { Cart, UserFemale } from 'grommet-icons'
+import { Cart, Gremlin, Search } from 'grommet-icons'
 
 import { RootState } from './store'
 import { UserServiceProps } from './store/session/reducers'
@@ -20,6 +20,7 @@ import UserMenu from './components/UserMenu'
 import CartMenu from './components/CartMenu'
 import { StyledLink } from './components/StyledLink'
 import { Admin } from './admin/Admin'
+import { SearchInput } from './components/SearchInput'
 
 interface DispatchProps {
   checkSession: () => void
@@ -32,7 +33,7 @@ type SidebarStates = undefined | 'cart' | 'user'
 const App: React.FC<Props> = (props: Props) => {
   const [loading, setLoading] = useState(true)
   const [sidebar, setSidebar] = useState<SidebarStates>(undefined)
-
+  const [showSearch, setShowSearch] = useState(false)
   // checkSession is destructured from props and passed into useEffect
   // which is a bit confusing since checkSession is also imported. ah scope.
   const { checkSession, userService } = props
@@ -80,11 +81,19 @@ const App: React.FC<Props> = (props: Props) => {
                 align="center"
                 justify="between"
               >
+                {showSearch && <SearchInput />}
+                <Button
+                  onClick={() => setShowSearch(!showSearch)}
+                  icon={<Search />}
+                  active={showSearch}
+                  hoverIndicator
+                />
+
                 <Button
                   onClick={() =>
                     setSidebar(sidebar === 'user' ? undefined : 'user')
                   }
-                  icon={<UserFemale />}
+                  icon={<Gremlin />}
                   active={sidebar === 'user'}
                   hoverIndicator
                 />
@@ -92,10 +101,23 @@ const App: React.FC<Props> = (props: Props) => {
                   onClick={() =>
                     setSidebar(sidebar === 'cart' ? undefined : 'cart')
                   }
-                  icon={<Cart />}
                   active={sidebar === 'cart'}
                   hoverIndicator
-                />
+                >
+                  <Stack anchor="top-right">
+                    <Box margin="small">
+                      <Cart />
+                    </Box>
+                    <Box
+                      background="brand"
+                      pad={{ horizontal: 'xsmall' }}
+                      style={{ marginTop: '-16px', marginRight: '6px' }}
+                      round
+                    >
+                      <Text size="xsmall">6</Text>
+                    </Box>
+                  </Stack>
+                </Button>
               </Box>
             </Box>
 
@@ -118,7 +140,12 @@ const App: React.FC<Props> = (props: Props) => {
               </Switch>
             </Box>
 
-            {sidebar === 'user' && <UserMenu userService={userService} />}
+            {sidebar === 'user' && (
+              <UserMenu
+                userService={userService}
+                onClick={() => setSidebar(undefined)}
+              />
+            )}
             {sidebar === 'cart' && <CartMenu />}
           </Grid>
         )}

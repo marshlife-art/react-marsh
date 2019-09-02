@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Markdown } from 'grommet'
 
-import usePageService from '../services/usePageService'
+import { usePageService } from '../services/usePageService'
 
 interface Props {
   slug: string

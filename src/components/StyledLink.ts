@@ -11,3 +11,11 @@ export const StyledLink = styled(Link)`
     text-decoration: underline;
   }
 `
+
+export const MenuLink = styled(StyledLink)`
+  &:hover {
+    text-decoration: underline;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+  }
+`
