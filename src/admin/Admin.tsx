@@ -70,7 +70,7 @@ export function Admin() {
           { name: 'foot', start: [0, 2], end: [2, 2] }
         ]}
         columns={['small', 'flex']}
-        rows={['xxsmall', 'large', 'flex']}
+        rows={['xxsmall', 'large', 'xsmall']}
         gap="small"
       >
         <Box gridArea="wedge">
