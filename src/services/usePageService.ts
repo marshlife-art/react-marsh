@@ -67,7 +67,26 @@ const useDocumentService = (collection: string, id: string | undefined) => {
     })
     db.get(id)
       .then(doc => setResult({ status: 'loaded', payload: doc as Page }))
-      .catch(error => setResult({ ...error }))
+      .catch(error => {
+        console.log('useDocumentService db.get error:', error)
+        if (error.name === 'not_found') {
+          console.log('BUT! try harder...')
+          db.put({ _id: id, content: '' })
+            .then(response =>
+              setResult({
+                status: 'loaded',
+                payload: {
+                  _id: response.id,
+                  _rev: response.rev,
+                  content: ''
+                } as Page
+              })
+            )
+            .catch(error => setResult({ ...error }))
+        } else {
+          setResult({ ...error })
+        }
+      })
   }, [collection, id])
 
   return result

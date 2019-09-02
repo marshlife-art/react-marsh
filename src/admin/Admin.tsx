@@ -7,6 +7,7 @@ import {
   useDocumentService,
   useDocumentPutService
 } from '../services/usePageService'
+import { Add } from 'grommet-icons'
 
 export function Admin() {
   const [collection, setCollection] = useState('')
@@ -100,13 +101,18 @@ export function Admin() {
                   </Box>
                 </Button>
               ))}
-              {/* <Box pad={{ vertical: 'small' }}>
-                <Text size="small" textAlign="end">
+              <Box pad={{ left: 'medium', top: 'medium' }}>
+                <Button
+                  plain={false}
+                  icon={<Add />}
+                  onClick={() => setSelectedDocID('/new_page')}
+                />
+                {/* <Text size="small" textAlign="end">
                   {allDocs.payload.total_rows === 1
                     ? `1 ${collection.replace(/s$/, '')}`
                     : `${allDocs.payload.total_rows} ${collection}`}
-                </Text>
-              </Box> */}
+                </Text> */}
+              </Box>
             </>
           )}
         </Box>
