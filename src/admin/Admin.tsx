@@ -64,9 +64,8 @@ export function Admin() {
         rows={['xxsmall', 'large', 'xsmall']}
         gap="small"
       >
-        <Box gridArea="wedge">
+        <Box gridArea="wedge" pad={{ left: 'medium' }}>
           <Select
-            plain
             options={['pages']}
             placeholder="Collections"
             value={collection}
@@ -85,21 +84,29 @@ export function Admin() {
                   key={row.id}
                   color="dark-1"
                   hoverIndicator
-                  active={selectedDocID === row.id}
                   onClick={() => setSelectedDocID(row.id)}
                 >
-                  <Box pad={{ horizontal: 'medium', vertical: 'small' }}>
+                  <Box
+                    pad={{ horizontal: 'medium', vertical: 'small' }}
+                    border={
+                      selectedDocID === row.id && {
+                        side: 'left',
+                        color: 'border',
+                        size: 'large'
+                      }
+                    }
+                  >
                     {row.id}
                   </Box>
                 </Button>
               ))}
-              <Box pad={{ vertical: 'small' }}>
+              {/* <Box pad={{ vertical: 'small' }}>
                 <Text size="small" textAlign="end">
                   {allDocs.payload.total_rows === 1
                     ? `1 ${collection.replace(/s$/, '')}`
                     : `${allDocs.payload.total_rows} ${collection}`}
                 </Text>
-              </Box>
+              </Box> */}
             </>
           )}
         </Box>
