@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Box,
-  Grid,
-  Select,
-  Button,
-  Text,
-  FormField,
-  TextArea,
-  TextInput
-} from 'grommet'
+import { Box, Grid, Select, Button, Text, TextArea, TextInput } from 'grommet'
 
 import { Page } from '../types/Page'
 import {
@@ -102,7 +93,7 @@ export function Admin() {
                   </Box>
                 </Button>
               ))}
-              <Box pad={{ horizontal: 'medium', vertical: 'small' }}>
+              <Box pad={{ vertical: 'small' }}>
                 <Text size="small" textAlign="end">
                   {allDocs.payload.total_rows === 1
                     ? `1 ${collection.replace(/s$/, '')}`
@@ -112,10 +103,23 @@ export function Admin() {
             </>
           )}
         </Box>
-        <Box gridArea="main" pad={{ horizontal: 'medium', vertical: 'small' }}>
+        <Box gridArea="main" pad={{ horizontal: 'medium', bottom: 'small' }}>
           {selectedPage && (
             <>
-              <FormField label="name" style={{ marginBottom: '0px' }} pad>
+              <Box
+                direction="row"
+                align="center"
+                justify="center"
+                pad={{ left: 'small', vertical: 'xsmall' }}
+                round="small"
+                border={{
+                  side: 'all',
+                  color: 'border'
+                }}
+              >
+                <Text style={{ lineHeight: '19px' }}>
+                  {window.location.origin}
+                </Text>
                 <TextInput
                   value={selectedPage._id}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -124,8 +128,13 @@ export function Admin() {
                       _id: event.target.value
                     })
                   }
+                  style={{
+                    border: 'none',
+                    paddingLeft: 0,
+                    width: '99.5%'
+                  }}
                 />
-              </FormField>
+              </Box>
 
               <TextArea
                 fill
@@ -138,9 +147,8 @@ export function Admin() {
                   })
                 }
                 style={{
-                  borderTop: 'none',
-                  borderTopLeftRadius: '0px',
-                  borderTopRightRadius: '0px'
+                  border: 'none',
+                  marginTop: '10px'
                 }}
               />
             </>
