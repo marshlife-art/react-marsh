@@ -4,9 +4,9 @@ import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-import { RootState } from '../store'
-import { login } from '../store/session/actions'
-import { UserServiceProps } from '../store/session/reducers'
+import { RootState } from '../redux'
+import { login } from '../redux/session/actions'
+import { UserServiceProps } from '../redux/session/reducers'
 
 interface OwnProps {}
 

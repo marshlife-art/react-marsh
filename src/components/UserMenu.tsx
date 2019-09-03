@@ -3,8 +3,8 @@ import { ThunkDispatch } from 'redux-thunk'
 import { connect } from 'react-redux'
 import { Box } from 'grommet'
 
-import { UserService } from '../store/session/reducers'
-import { logout } from '../store/session/actions'
+import { UserService } from '../redux/session/reducers'
+import { logout } from '../redux/session/actions'
 import { MenuLink } from './StyledLink'
 
 interface UserMenuProps {

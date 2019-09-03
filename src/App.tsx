@@ -8,12 +8,12 @@ import {
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { Grommet, Box, Grid, Button, Text, Stack } from 'grommet'
-import { grommet } from 'grommet/themes'
-import { Cart, Gremlin, Search } from 'grommet-icons'
+import { grommet, base } from 'grommet/themes'
+import { Cart, Gremlin, Search, Close } from 'grommet-icons'
 
-import { RootState } from './store'
-import { UserServiceProps } from './store/session/reducers'
-import { checkSession } from './store/session/actions'
+import { RootState } from './redux'
+import { UserServiceProps } from './redux/session/reducers'
+import { checkSession } from './redux/session/actions'
 import Landing from './components/Landing'
 import Login from './components/Login'
 import UserMenu from './components/UserMenu'
@@ -21,6 +21,14 @@ import CartMenu from './components/CartMenu'
 import { StyledLink } from './components/StyledLink'
 import { Admin } from './admin/Admin'
 import { SearchInput } from './components/SearchInput'
+import { Store } from './store/Store'
+import styled from 'styled-components'
+
+const StickyBox = styled(Box)`
+  position: sticky;
+  top: 0;
+  background: ${base.global.colors.white};
+`
 
 interface DispatchProps {
   checkSession: () => void
@@ -48,7 +56,7 @@ const App: React.FC<Props> = (props: Props) => {
 
   return (
     <Router>
-      <Grommet theme={grommet}>
+      <Grommet theme={grommet} cssVars>
         {loading ? (
           'l o a d i n g  .  .  .'
         ) : (
@@ -63,7 +71,7 @@ const App: React.FC<Props> = (props: Props) => {
             ]}
             style={{ minHeight: '100vh' }}
           >
-            <Box
+            <StickyBox
               gridArea="header"
               direction="row"
               align="center"
@@ -76,16 +84,19 @@ const App: React.FC<Props> = (props: Props) => {
                 </StyledLink>
               </Text>
 
-              <Box
-                gridArea="header"
-                direction="row"
-                align="center"
-                justify="between"
-              >
+              <Box direction="row" align="center" justify="between">
+                <StyledLink
+                  to="/store"
+                  color="dark-1"
+                  style={{ paddingRight: '1em' }}
+                >
+                  Store
+                </StyledLink>
+
                 {showSearch && <SearchInput />}
                 <Button
                   onClick={() => setShowSearch(!showSearch)}
-                  icon={<Search />}
+                  icon={showSearch ? <Close /> : <Search />}
                   active={showSearch}
                   hoverIndicator
                 />
@@ -120,7 +131,7 @@ const App: React.FC<Props> = (props: Props) => {
                   </Stack>
                 </Button>
               </Box>
-            </Box>
+            </StickyBox>
 
             <Box
               gridArea="main"
@@ -131,6 +142,7 @@ const App: React.FC<Props> = (props: Props) => {
             >
               <Switch>
                 <Route exact path="/" component={Landing} />
+                <Route exact path="/store" component={Store} />
                 <Route exact path="/login" component={Login} />
                 {props.userService.user &&
                 props.userService.user.roles &&

@@ -33,7 +33,10 @@ const usePageService = (slug: string, setLoading: (value: boolean) => void) => {
 // Promise<Core.AllDocsResponse<Content & Model>>
 type AllDocsResponse = Service<PouchDB.Core.AllDocsResponse<any>>
 
-const useAllDocumentsService = (collection: string) => {
+const useAllDocumentsService = (
+  collection: string,
+  include_docs: boolean = false
+) => {
   const [result, setResult] = useState<AllDocsResponse>({
     status: 'loading'
   })
@@ -45,10 +48,10 @@ const useAllDocumentsService = (collection: string) => {
     const db = new PouchDB(DB_URL + collection, {
       skip_setup: true
     })
-    db.allDocs()
+    db.allDocs({ include_docs: include_docs })
       .then(docs => setResult({ status: 'loaded', payload: docs }))
       .catch(error => setResult({ ...error }))
-  }, [collection])
+  }, [collection, include_docs])
 
   return result
 }

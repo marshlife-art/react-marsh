@@ -25,6 +25,8 @@ export function Admin() {
   const [doSave, setDoSave] = useState(false)
   const [saveMessage, setSaveMessage] = useState('save')
 
+  const [actionModalOpen, setActionModalOpen] = useState(false)
+
   useEffect(() => {
     saveMessage !== 'save' &&
       window.setTimeout(() => setSaveMessage('save'), 5000)
@@ -48,6 +50,21 @@ export function Admin() {
     doc.status === 'loaded' && setSelectedPage(doc.payload)
   }, [doc])
 
+  function newAction() {
+    switch (collection) {
+      case 'pages':
+        setSelectedDocID('/new_page')
+        break
+      case 'products_wholesale':
+        console.log('products_wholesale')
+        setActionModalOpen(true)
+        break
+      default:
+        console.log('newAction has nothing to do')
+        break
+    }
+  }
+
   return (
     <Box gridArea="main" align="stretch" justify="start" fill>
       <Grid
@@ -61,16 +78,18 @@ export function Admin() {
         gap="small"
       >
         <Box gridArea="side" fill>
-          <Select
-            options={['pages', 'products_wholesale']}
-            placeholder="Collections"
-            value={collection}
-            onChange={({ option }) => {
-              setSelectedDocID(undefined)
-              setSelectedPage(undefined)
-              setCollection(option)
-            }}
-          />
+          <Box pad={{ left: 'medium' }}>
+            <Select
+              options={['pages', 'products_wholesale']}
+              placeholder="Collections"
+              value={collection}
+              onChange={({ option }) => {
+                setSelectedDocID(undefined)
+                setSelectedPage(undefined)
+                setCollection(option)
+              }}
+            />
+          </Box>
 
           {allDocs.status === 'loaded' && (
             <>
@@ -95,20 +114,18 @@ export function Admin() {
                   </Box>
                 </Button>
               ))}
-              {collection === 'pages' && (
-                <Box pad={{ left: 'medium', top: 'medium' }}>
-                  <Button
-                    plain={false}
-                    icon={<Add />}
-                    onClick={() => setSelectedDocID('/new_page')}
-                  />
-                  {/* <Text size="small" textAlign="end">
+              <Box pad={{ left: 'medium', top: 'medium' }}>
+                <Button
+                  plain={false}
+                  icon={<Add />}
+                  onClick={() => newAction()}
+                />
+                {/* <Text size="small" textAlign="end">
                   {allDocs.payload.total_rows === 1
                     ? `1 ${collection.replace(/s$/, '')}`
                     : `${allDocs.payload.total_rows} ${collection}`}
                 </Text> */}
-                </Box>
-              )}
+              </Box>
             </>
           )}
         </Box>
@@ -122,7 +139,11 @@ export function Admin() {
               setDoSave={setDoSave}
             />
           )}
-          {collection === 'products_wholesale' && <ProductsWholesaleEditor />}
+          {collection === 'products_wholesale' && (
+            <ProductsWholesaleEditor
+              {...{ actionModalOpen, setActionModalOpen, selectedDocID }}
+            />
+          )}
         </Box>
       </Grid>
     </Box>
