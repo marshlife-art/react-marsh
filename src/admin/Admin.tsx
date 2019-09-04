@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Grid, Select, Button, Text } from 'grommet'
+import { Box, Grid, Select, Button } from 'grommet'
 
 import { Page } from '../types/Page'
 import {

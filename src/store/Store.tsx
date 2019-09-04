@@ -4,7 +4,7 @@ import { FormNext } from 'grommet-icons'
 
 import { useAllDocumentsService } from '../services/usePageService'
 import { useProductDocService } from '../services/useProductServices'
-import { ProductsInfinite } from '../components/ProductsInfinite'
+import { ProductsStore } from '../components/ProductsStore'
 import styled from 'styled-components'
 
 const BreadCrumb = styled(Text)`
@@ -29,20 +29,8 @@ function Store() {
     selectedDoc
   )
 
-  const headerDocResult = useProductDocService('products_wholesale', 'header')
+  // const headerDocResult = useProductDocService('products_wholesale', 'header')
 
-  function productMap(prod: string[]) {
-    return [
-      prod[2].trim(),
-      prod[3].trim(),
-      prod[4],
-      prod[5],
-      prod[6],
-      prod[8],
-      prod[9],
-      ...prod.slice(11, prod.length)
-    ]
-  }
   useEffect(() => {
     if (
       !selectedDoc ||
@@ -59,7 +47,7 @@ function Store() {
   }, [selectedDoc, productDocResult])
 
   return (
-    <Box pad={{ horizontal: 'medium' }} fill>
+    <Box pad={{ horizontal: 'medium' }} align="center" fill>
       <Box
         direction="row"
         width="full"
@@ -151,21 +139,7 @@ function Store() {
             </Box>
           ))}
       {selectedDoc && selectedCat && (
-        <ProductsInfinite
-          header={
-            headerDocResult.status === 'loaded' && headerDocResult.payload.data
-              ? headerDocResult.payload.data.map(productMap)
-              : undefined
-          }
-          rows={
-            productDocResult.status === 'loaded' &&
-            productDocResult.payload.data
-              ? productDocResult.payload.data
-                  .filter(product => product[10] === selectedCat)
-                  .map(productMap)
-              : undefined
-          }
-        />
+        <ProductsStore {...{ selectedCat, productDocResult }} />
       )}
     </Box>
   )
