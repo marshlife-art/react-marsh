@@ -18,6 +18,32 @@ interface ProductProps {
   row: string[]
 }
 
+function ProductPrice(props: { price: string }) {
+  const [a, b] = props.price.split('.')
+
+  return (
+    <Box direction="row" justify="center">
+      <Text size="xlarge" style={{ marginRight: '3px' }}>
+        $
+      </Text>
+      <Text size="xlarge" weight="bold">
+        {a.replace('$', '')}.
+      </Text>
+      <Text
+        as="sup"
+        size="medium"
+        style={{
+          textDecoration: 'underline',
+          marginLeft: '3px',
+          fontStyle: 'italic'
+        }}
+      >
+        {b}
+      </Text>
+    </Box>
+  )
+}
+
 function Product(props: ProductProps) {
   const { row } = props
   return (
@@ -72,15 +98,8 @@ function Product(props: ProductProps) {
           <Box direction="column" pad={{ vertical: 'small' }}>
             {row[5] === row[6] ? (
               <>
-                <Box>
-                  <Text size="xlarge" weight="bold" title="price">
-                    {row[5]}
-                  </Text>
-                </Box>
+                <ProductPrice price={row[5]} />
                 <Box gap="small" direction="row">
-                  <Text title="PK" size="small">
-                    {row[2]}
-                  </Text>
                   <Text title="size" size="small">
                     {row[3]}
                   </Text>
@@ -88,14 +107,11 @@ function Product(props: ProductProps) {
               </>
             ) : (
               <>
-                <Box>
-                  <Text size="xlarge" weight="bold" title="price">
-                    {row[5]}
-                  </Text>
-                </Box>
-                <Box direction="row" gap="xsmall">
+                <ProductPrice price={row[5]} />
+                <Box direction="row" justify="between" gap="xsmall">
                   <Text size="small" title="PK">
-                    {row[2]} {row[3]}
+                    {row[2]}
+                    {row[3]}
                   </Text>
                   <Text
                     size="small"
