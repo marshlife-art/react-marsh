@@ -22,7 +22,7 @@ function ProductPrice(props: { price: string }) {
   const [a, b] = props.price.split('.')
 
   return (
-    <Box direction="row" justify="center">
+    <Box direction="row" justify="center" title="price">
       <Text size="xlarge" style={{ marginRight: '3px' }}>
         $
       </Text>
@@ -81,7 +81,10 @@ function Product(props: ProductProps) {
             <Text size="xlarge" title="description">
               {row[1]}
             </Text>
-            <Box direction="row" title="properties">
+            <Box direction="row" gap="small" justify="center">
+              <Text size="medium" title="package count">
+                {row[2]}ct.
+              </Text>
               {row.slice(7, 22).map(
                 r =>
                   r !== '' && (
@@ -108,19 +111,9 @@ function Product(props: ProductProps) {
             ) : (
               <>
                 <ProductPrice price={row[5]} />
-                <Box direction="row" justify="between" gap="xsmall">
-                  <Text size="small" title="PK">
-                    {row[2]}
-                    {row[3]}
-                  </Text>
-                  <Text
-                    size="small"
-                    style={{ fontStyle: 'italic' }}
-                    title="price each"
-                  >
-                    {row[6]} ea.
-                  </Text>
-                </Box>
+                <Text size="small" title="unit price each" textAlign="center">
+                  {row[6]} / {row[3]}
+                </Text>
               </>
             )}
           </Box>

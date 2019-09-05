@@ -28,6 +28,7 @@ const StickyBox = styled(Box)`
   position: sticky;
   top: 0;
   background: ${base.global.colors.white};
+  z-index: 1;
 `
 
 interface DispatchProps {
@@ -88,7 +89,7 @@ const App: React.FC<Props> = (props: Props) => {
                 <StyledLink
                   to="/store"
                   color="dark-1"
-                  style={{ paddingRight: '1em' }}
+                  style={{ paddingRight: '1em', paddingLeft: '0.5em' }}
                 >
                   Store
                 </StyledLink>
