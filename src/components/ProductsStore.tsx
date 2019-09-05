@@ -32,7 +32,7 @@ const PROPERTY_MAP: { [index: string]: string } = {
   og: 'Organic',
   r: 'Refined sugar',
   v: 'Vegan',
-  w: 'Wheat freey = Yeast free',
+  w: 'Yeast free',
   ft: 'Fair Trade',
   n: 'Natural',
   s: 'Specialty Only',
@@ -82,7 +82,7 @@ function PropertyButton(props: { property: string }) {
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
       >
-        {props.property}
+        <Text size="small">{props.property}</Text>
       </Box>
       {open && (
         <Drop align={{ left: 'right' }} target={ref.current} plain>

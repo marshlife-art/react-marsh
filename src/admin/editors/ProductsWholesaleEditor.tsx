@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Text, Layer, Heading } from 'grommet'
+import { Box, Layer, Heading } from 'grommet'
 
 import Papa from 'papaparse'
 
