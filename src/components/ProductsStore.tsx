@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import {
   Box,
   InfiniteScroll,
@@ -8,14 +8,38 @@ import {
   TableCell,
   TableHeader,
   Text,
-  Button
+  Button,
+  Drop
 } from 'grommet'
 import { Service } from '../types/Service'
 import { ProductDoc } from '../types/Product'
 import { Cart } from 'grommet-icons'
+import Loading from './Loading'
 
 interface ProductProps {
   row: string[]
+}
+
+const PROPERTY_MAP: { [index: string]: string } = {
+  a: 'Artificial ingredients',
+  c: 'Low carb',
+  d: 'Dairy free',
+  f: 'Food Service items',
+  g: 'Gluten free',
+  k: 'Kosher',
+  l: 'Low sodium/no salt',
+  m: 'Non-GMO Project Verified ',
+  og: 'Organic',
+  r: 'Refined sugar',
+  v: 'Vegan',
+  w: 'Wheat freey = Yeast free',
+  ft: 'Fair Trade',
+  n: 'Natural',
+  s: 'Specialty Only',
+  y: 'Yeast free',
+  1: '100% organic',
+  2: '95+% organic',
+  3: '70%+ organic'
 }
 
 function ProductPrice(props: { price: string }) {
@@ -23,11 +47,9 @@ function ProductPrice(props: { price: string }) {
 
   return (
     <Box direction="row" justify="center" title="price">
-      <Text size="xlarge" style={{ marginRight: '3px' }}>
-        $
-      </Text>
+      <Text size="xlarge">$</Text>
       <Text size="xlarge" weight="bold">
-        {a.replace('$', '')}.
+        {a.replace('$', '')}
       </Text>
       <Text
         as="sup"
@@ -44,6 +66,39 @@ function ProductPrice(props: { price: string }) {
   )
 }
 
+function PropertyButton(props: { property: string }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef()
+
+  return (
+    <>
+      <Box
+        round
+        background="accent-3"
+        pad={{ horizontal: 'xsmall', vertical: 'xxsmall' }}
+        ref={ref as any}
+        onMouseOver={() => setOpen(true)}
+        onMouseOut={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+      >
+        {props.property}
+      </Box>
+      {open && (
+        <Drop align={{ left: 'right' }} target={ref.current} plain>
+          <Box
+            pad="xsmall"
+            background="dark-3"
+            round={{ size: 'medium', corner: 'left' }}
+          >
+            {PROPERTY_MAP[props.property]}
+          </Box>
+        </Drop>
+      )}
+    </>
+  )
+}
+
 function Product(props: ProductProps) {
   const { row } = props
   return (
@@ -54,45 +109,35 @@ function Product(props: ProductProps) {
         4 Unit Type
         5 W/S Price
         6 U Price
-        7 a
-        r
-        c
-        l
-        d
-        f
-        g
-        v
-        w
-        y
-        k
-        ft
-        m
-        og
-        s
-        22 n */
+        7->22 properties */
 
     row && (
       <>
         <TableCell>
           <Box direction="column" pad={{ vertical: 'small' }}>
-            <Text size="medium" title="brand name">
+            <Text size="large" title="brand name">
               {row[0]}
             </Text>
             <Text size="xlarge" title="description">
               {row[1]}
             </Text>
-            <Box direction="row" gap="small" justify="center">
+            <Box
+              direction="row"
+              gap="small"
+              align="center"
+              margin={{ top: 'xsmall' }}
+            >
               <Text size="medium" title="package count">
                 {row[2]}ct.
               </Text>
-              {row.slice(7, 22).map(
-                r =>
-                  r !== '' && (
-                    <Text key={r} size="small">
-                      {r}
-                    </Text>
-                  )
-              )}
+              {row.slice(7, 22).map(r => {
+                if (!r || /^\s*$/.test(r)) {
+                  // avoid blank stringz
+                  return null
+                } else {
+                  return <PropertyButton key={r} property={r} />
+                }
+              })}
             </Box>
           </Box>
         </TableCell>
@@ -175,9 +220,9 @@ function ProductsStore(props: ProductsStoreProps) {
         <TableBody>
           <InfiniteScroll
             renderMarker={marker => (
-              <TableRow color="brand">
-                <TableCell colSpan={5}>
-                  {marker} . . . L O A D I N G _ M O R E _ I T E M S . . .
+              <TableRow>
+                <TableCell colSpan={3}>
+                  <Loading />
                 </TableCell>
               </TableRow>
             )}

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Box, Markdown } from 'grommet'
 
 import { usePageService } from '../services/usePageService'
+import Loading from './Loading'
 
 interface Props {
   slug: string
@@ -13,7 +14,7 @@ export function Pages(props: Props) {
 
   return (
     <Box pad={{ horizontal: 'medium', vertical: 'small' }}>
-      {loading && 'Loading'}
+      {loading && <Loading />}
       {result.status === 'loaded' && (
         <Markdown>{result.payload.content}</Markdown>
       )}

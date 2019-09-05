@@ -9,6 +9,7 @@ import {
 } from '../../services/useProductServices'
 import { ProductDoc } from '../../types/Product'
 import { ProductsInfinite } from '../../components/ProductsInfinite'
+import Loading from '../../components/Loading'
 
 interface ProductsWholesaleEditorProps {
   actionModalOpen: boolean
@@ -155,12 +156,12 @@ function ProductsWholesaleEditor(props: ProductsWholesaleEditorProps) {
               justify="center"
               pad={{ top: 'medium', bottom: 'small' }}
             >
-              {loading && <Text>L O A D I N G . . .</Text>}
+              {loading && <Loading />}
             </Box>
           </Box>
         </Layer>
       )}
-      {loading && 'L O A D I N G . . .'}
+      {loading && <Loading />}
       {rows.length > 0 && <ProductsInfinite {...{ header, rows }} />}
     </Box>
   )

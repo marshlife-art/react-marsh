@@ -23,6 +23,7 @@ import { Admin } from './admin/Admin'
 import { SearchInput } from './components/SearchInput'
 import { Store } from './store/Store'
 import styled from 'styled-components'
+import Loading from './components/Loading'
 
 const StickyBox = styled(Box)`
   position: sticky;
@@ -57,9 +58,10 @@ const App: React.FC<Props> = (props: Props) => {
 
   return (
     <Router>
-      <Grommet theme={grommet} cssVars>
+      {/* cssVars */}
+      <Grommet theme={grommet}>
         {loading ? (
-          'l o a d i n g  .  .  .'
+          <Loading />
         ) : (
           <Grid
             fill

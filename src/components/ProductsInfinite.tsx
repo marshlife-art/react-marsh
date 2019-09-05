@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHeader
 } from 'grommet'
+import Loading from './Loading'
 
 interface ProductsInfiniteProps {
   header?: string[][]
@@ -35,7 +36,7 @@ function ProductsInfinite(props: ProductsInfiniteProps) {
             renderMarker={marker => (
               <TableRow color="brand">
                 <TableCell colSpan={5}>
-                  {marker} . . . L O A D I N G _ M O R E _ I T E M S . . .
+                  <Loading />
                 </TableCell>
               </TableRow>
             )}

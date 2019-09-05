@@ -6,6 +6,7 @@ import { useAllDocumentsService } from '../services/usePageService'
 import { useProductDocService } from '../services/useProductServices'
 import { ProductsStore } from '../components/ProductsStore'
 import styled from 'styled-components'
+import Loading from '../components/Loading'
 
 const BreadCrumb = styled(Text)`
   &:hover {
@@ -113,9 +114,7 @@ function Store() {
               ))}
         </Box>
       )}
-      {selectedDoc &&
-        productDocResult.status === 'loading' &&
-        'L O A D I N G . . .'}
+      {selectedDoc && productDocResult.status === 'loading' && <Loading />}
       {selectedDoc &&
         !selectedCat &&
         (productDocResult.status === 'loaded' &&
