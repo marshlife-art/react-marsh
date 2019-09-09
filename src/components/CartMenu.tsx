@@ -57,12 +57,13 @@ const Quantity = () => {
 
 const CartMenu = (props: { onClickOutside: () => void }) => {
   const scrollRef = useRef<HTMLDivElement>()
+  const scrollRefElem = scrollRef.current
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    if (scrollRefElem) {
+      scrollRefElem.scrollTop = scrollRefElem.scrollHeight
     }
-  }, [scrollRef.current])
+  }, [scrollRefElem])
 
   const cartDocs = useCartDocService()
 
