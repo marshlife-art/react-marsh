@@ -1,5 +1,10 @@
+interface LineItem {
+  quantity: number
+  price: number
+  data?: string[]
+}
 export interface CartDoc {
   _id: string
   _rev?: string
-  data?: string[][]
+  line_items?: LineItem[]
 }

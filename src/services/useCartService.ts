@@ -54,6 +54,27 @@ const useCartDocService = () => {
           setResult({ ...error })
         }
       })
+
+    const changes = db
+      .changes({
+        since: 'now',
+        live: true,
+        include_docs: true
+      })
+      .on('change', change => {
+        if (change.doc) {
+          const doc: CartDoc = change.doc as CartDoc
+          setResult({ status: 'loaded', payload: doc as CartDoc })
+        }
+      })
+      .on('complete', info => {
+        // changes() was canceled
+      })
+      .on('error', err => {
+        console.log(err)
+      })
+
+    return () => changes.cancel()
   }, [])
 
   return result
@@ -65,7 +86,7 @@ const useCartItemCount = () => {
   const db = new PouchDB('cart')
 
   db.get('cart').then((doc: CartDoc) =>
-    setItemCount(doc.data ? doc.data.length : 0)
+    setItemCount(doc.line_items ? doc.line_items.length : 0)
   )
 
   useEffect(() => {
@@ -78,7 +99,7 @@ const useCartItemCount = () => {
       .on('change', change => {
         if (change.doc) {
           const doc: CartDoc = change.doc as CartDoc
-          setItemCount(doc.data ? doc.data.length : 0)
+          setItemCount(doc.line_items ? doc.line_items.length : 0)
         }
       })
       .on('complete', info => {
@@ -99,11 +120,47 @@ const addToCart = (row: string[]) => {
 
   db.get('cart')
     .then((cartDoc: CartDoc) => {
-      cartDoc.data = cartDoc.data || []
-      cartDoc.data.push(row)
+      cartDoc.line_items = cartDoc.line_items || []
+      cartDoc.line_items.push({
+        quantity: 1,
+        price: parseFloat(row[5].replace('$', '')),
+        data: row
+      })
       db.put(cartDoc)
     })
     .catch(error => console.warn('addToCart caught error:', error))
 }
 
-export { useCartPutService, useCartDocService, useCartItemCount, addToCart }
+const removeItemFromCart = (index: number) => {
+  const db = new PouchDB('cart')
+
+  db.get('cart')
+    .then((cartDoc: CartDoc) => {
+      cartDoc.line_items = cartDoc.line_items || []
+      cartDoc.line_items.splice(index, 1)
+      return db.put(cartDoc)
+    })
+    .catch(error => console.warn('addToCart caught error:', error))
+}
+
+const emptyCart = () => {
+  const db = new PouchDB('cart')
+
+  db.get('cart')
+    .then((cartDoc: CartDoc) => {
+      cartDoc.line_items = []
+      return db.put(cartDoc)
+    })
+    .catch(function(err) {
+      console.log('emptyCart error:', err)
+    })
+}
+
+export {
+  useCartPutService,
+  useCartDocService,
+  useCartItemCount,
+  addToCart,
+  removeItemFromCart,
+  emptyCart
+}

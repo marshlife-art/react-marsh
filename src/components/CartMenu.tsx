@@ -3,9 +3,15 @@ import React, { useRef, useEffect } from 'react'
 // import { connect } from 'react-redux'
 // import styled from 'styled-components'
 import { Box, Text, Button, Layer, TextInput, Select } from 'grommet'
-import { useCartDocService } from '../services/useCartService'
+import {
+  useCartDocService,
+  removeItemFromCart,
+  emptyCart
+} from '../services/useCartService'
 import { FormClose, Trash } from 'grommet-icons'
 import { ProductPriceCart } from './ProductPrice'
+import { ProductProperty } from './ProductProperty'
+import { LineItem } from '../types/Cart'
 
 // import { StyledLink } from './StyledLink'
 
@@ -80,9 +86,14 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
           as="header"
           elevation="small"
           justify="between"
+          pad="medium"
         >
           <Text margin={{ left: 'small' }}>Cart</Text>
-          <Button icon={<FormClose />} onClick={props.onClickOutside} />
+          <Button
+            icon={<FormClose />}
+            onClick={props.onClickOutside}
+            hoverIndicator
+          />
         </Box>
         <Box
           overflow="auto"
@@ -90,93 +101,127 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
           ref={scrollRef as any}
         >
           {cartDocs.status === 'loaded' &&
-            cartDocs.payload.data &&
-            cartDocs.payload.data.map((row: string[], idx: number) => (
-              <Box
-                direction="row"
-                key={`cartrow${idx}`}
-                border={idx === 0 ? undefined : 'top'}
-                pad="small"
-                justify="between"
-              >
-                <Box direction="column" pad={{ right: 'small' }}>
-                  <Text size="small" title="brand name">
-                    {row[0]}
-                  </Text>
-                  <Text size="medium" title="description">
-                    {row[1]}
-                  </Text>
+            cartDocs.payload.line_items &&
+            cartDocs.payload.line_items.map(
+              (line_item: LineItem, idx: number) => {
+                const row = line_item.data
+                if (!row) {
+                  return null
+                }
+                return (
                   <Box
                     direction="row"
-                    gap="small"
-                    align="center"
-                    margin={{ vertical: 'xsmall' }}
-                    height="24px"
+                    key={`cartrow${idx}`}
+                    border={idx === 0 ? undefined : 'top'}
+                    pad="small"
+                    justify="between"
                   >
-                    <Text size="xsmall" title="package count">
-                      {row[2]}ct.
-                    </Text>
-                    {row.slice(7, 22).map((r, i) => {
-                      if (!r || /^\s*$/.test(r)) {
-                        // avoid blank stringz
-                        return null
-                      } else {
-                        return (
-                          <Text size="xsmall" key={`prop${i}`}>
-                            {r}
-                          </Text>
-                        )
-                      }
-                    })}
-                  </Box>
-                </Box>
-                <Box justify="between" direction="row" align="center">
-                  <Quantity />
+                    <Box direction="column" pad={{ right: 'small' }}>
+                      <Text size="small" title="brand name">
+                        {row[0]}
+                      </Text>
+                      <Text size="medium" title="description">
+                        {row[1]}
+                      </Text>
+                      <Box
+                        direction="row"
+                        gap="small"
+                        align="center"
+                        height="24px"
+                      >
+                        <Text size="xsmall" title="package count">
+                          {row[2]}ct.
+                        </Text>
+                        {row.slice(7, 22).map((r, i) => {
+                          if (!r || /^\s*$/.test(r)) {
+                            // avoid blank stringz
+                            return null
+                          } else {
+                            return <ProductProperty key={r} property={r} />
+                          }
+                        })}
+                      </Box>
+                    </Box>
+                    <Box justify="between" direction="row" align="center">
+                      <Quantity />
 
-                  <ProductPriceCart price={row[5]} />
-                  <Button
-                    icon={<Trash />}
-                    margin={{ top: '20px' }}
-                    hoverIndicator
-                  />
-                </Box>
+                      <ProductPriceCart price={row[5]} />
+                      <Button
+                        icon={<Trash color="status-critical" />}
+                        margin={{ top: '20px' }}
+                        hoverIndicator
+                        onClick={() => {
+                          if (window.confirm('are you sure?')) {
+                            removeItemFromCart(idx)
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                )
+              }
+            )}
+
+          <Box
+            border="top"
+            pad="medium"
+            justify="end"
+            direction="row"
+            gap="medium"
+          >
+            {cartDocs.status === 'loaded' && cartDocs.payload.line_items && (
+              <Box direction="column">
+                <Text>Quantity</Text>
+                <Text size="large">
+                  {cartDocs.payload.line_items.reduce(
+                    (accumulator, currentValue) =>
+                      accumulator + currentValue.quantity,
+                    0
+                  )}
+                </Text>
               </Box>
-            ))}
+            )}
+
+            {cartDocs.status === 'loaded' && cartDocs.payload.line_items && (
+              <Box direction="column">
+                <Text>Total</Text>
+                <Text size="large" weight="bold">
+                  $
+                  {cartDocs.payload.line_items
+                    .reduce(
+                      (accumulator, currentValue) =>
+                        accumulator + currentValue.price,
+                      0
+                    )
+                    .toFixed(2)}
+                </Text>
+              </Box>
+            )}
+          </Box>
         </Box>
         <Box
           as="footer"
           border={{ side: 'top' }}
-          pad="small"
+          pad="medium"
           justify="between"
           direction="row"
           align="center"
         >
-          <Button color="status-warning" label="Empty Cart" hoverIndicator />
+          <Button
+            color="status-critical"
+            label="Empty Cart"
+            hoverIndicator
+            onClick={() => {
+              if (window.confirm('are you sure?')) {
+                emptyCart()
+                props.onClickOutside()
+              }
+            }}
+          />
           <Button primary label="Checkout" hoverIndicator />
         </Box>
       </Box>
     </Layer>
-
-    // <Box
-    //   gridArea="sidebar"
-    //   width="small"
-    //   animation={[
-    //     { type: 'fadeIn', duration: 300 },
-    //     { type: 'slideLeft', size: 'xlarge', duration: 150 }
-    //   ]}
-    //   style={{ position: 'sticky', top: 0 }}
-    // >
-    //   <Box
-    //     pad={{ horizontal: 'medium', vertical: 'small' }}
-    //     border={{
-    //       side: 'right',
-    //       color: 'border',
-    //       size: 'large'
-    //     }}
-    //   >
-
-    //   </Box>
-    // </Box>
   )
 }
 

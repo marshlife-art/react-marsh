@@ -4,7 +4,11 @@ import { Cart } from 'grommet-icons'
 import { useCartItemCount } from '../services/useCartService'
 
 function CartButton() {
-  const cartDocs = useCartItemCount()
+  const cartItemCount = useCartItemCount()
+
+  if (cartItemCount === 0) {
+    return null
+  }
 
   return (
     <Stack anchor="top-right">
@@ -17,7 +21,7 @@ function CartButton() {
         style={{ marginTop: '-16px', marginRight: '6px' }}
         round
       >
-        <Text size="xsmall">{cartDocs}</Text>
+        <Text size="xsmall">{cartItemCount}</Text>
       </Box>
     </Stack>
   )

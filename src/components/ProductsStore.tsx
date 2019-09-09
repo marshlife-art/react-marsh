@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   InfiniteScroll,
@@ -8,8 +8,7 @@ import {
   TableCell,
   TableHeader,
   Text,
-  Button,
-  Drop
+  Button
 } from 'grommet'
 import { Service } from '../types/Service'
 import { ProductDoc } from '../types/Product'
@@ -17,64 +16,10 @@ import { Cart } from 'grommet-icons'
 import Loading from './Loading'
 import { addToCart } from '../services/useCartService'
 import { ProductPriceAndUnit } from './ProductPrice'
+import { ProductProperty } from './ProductProperty'
 
 interface ProductProps {
   row: string[]
-}
-
-const PROPERTY_MAP: { [index: string]: string } = {
-  a: 'Artificial ingredients',
-  c: 'Low carb',
-  d: 'Dairy free',
-  f: 'Food Service items',
-  g: 'Gluten free',
-  k: 'Kosher',
-  l: 'Low sodium/no salt',
-  m: 'Non-GMO Project Verified ',
-  og: 'Organic',
-  r: 'Refined sugar',
-  v: 'Vegan',
-  w: 'Yeast free',
-  ft: 'Fair Trade',
-  n: 'Natural',
-  s: 'Specialty Only',
-  y: 'Yeast free',
-  1: '100% organic',
-  2: '95+% organic',
-  3: '70%+ organic'
-}
-
-function ProductProperty(props: { property: string }) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef()
-
-  return (
-    <>
-      <Box
-        round
-        background="accent-3"
-        pad={{ horizontal: 'xsmall', vertical: 'xxsmall' }}
-        ref={ref as any}
-        onMouseOver={() => setOpen(true)}
-        onMouseOut={() => setOpen(false)}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
-      >
-        <Text size="small">{props.property}</Text>
-      </Box>
-      {open && (
-        <Drop align={{ left: 'right' }} target={ref.current} plain>
-          <Box
-            pad="xsmall"
-            background="dark-3"
-            round={{ size: 'medium', corner: 'left' }}
-          >
-            {PROPERTY_MAP[props.property]}
-          </Box>
-        </Drop>
-      )}
-    </>
-  )
 }
 
 function Product(props: ProductProps) {
@@ -113,12 +58,7 @@ function Product(props: ProductProps) {
             <Text size="xlarge" title="description">
               {row[1]}
             </Text>
-            <Box
-              direction="row"
-              gap="small"
-              align="center"
-              margin={{ top: 'xsmall' }}
-            >
+            <Box direction="row" gap="small" align="center">
               <Text size="medium" title="package count">
                 {row[2]}ct.
               </Text>
