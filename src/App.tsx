@@ -122,6 +122,9 @@ const App: React.FC<Props> = (props: Props) => {
                 >
                   <CartButton />
                 </Button>
+                {sidebar === 'cart' && (
+                  <CartMenu onClickOutside={() => setSidebar(undefined)} />
+                )}
               </Box>
             </StickyBox>
 
@@ -152,7 +155,6 @@ const App: React.FC<Props> = (props: Props) => {
                 onClick={() => setSidebar(undefined)}
               />
             )}
-            {sidebar === 'cart' && <CartMenu />}
           </Grid>
         )}
       </Grommet>
