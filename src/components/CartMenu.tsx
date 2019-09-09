@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 // import { ThunkDispatch } from 'redux-thunk'
 // import { connect } from 'react-redux'
 // import styled from 'styled-components'
-import { Box, Text, Button, Layer, TextInput } from 'grommet'
+import { Box, Text, Button, Layer, TextInput, Select } from 'grommet'
 import { useCartDocService } from '../services/useCartService'
 import { FormClose, Trash } from 'grommet-icons'
+import { ProductPriceCart } from './ProductPrice'
 
 // import { StyledLink } from './StyledLink'
 
@@ -23,27 +24,45 @@ import { FormClose, Trash } from 'grommet-icons'
 // props: CartMenuProps & DispatchProps
 
 const Quantity = () => {
-  const [value, setValue] = React.useState(1)
+  const [qty, setQty] = React.useState(1)
+
+  const [unit, setUnit] = React.useState('CS')
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setValue(parseInt(event.target.value))
+    setQty(parseInt(event.target.value))
 
   return (
-    <Box direction="column">
-      <Text size="small">Quantity</Text>
-      <TextInput
-        type="number"
-        value={value}
-        onChange={onChange}
-        placeholder="Quantity"
-        style={{ maxWidth: '71px' }}
-      />
+    <Box direction="row">
+      <Box direction="column">
+        <Text size="small">Quantity</Text>
+        <TextInput
+          type="number"
+          value={qty}
+          onChange={onChange}
+          placeholder="Quantity"
+          style={{ maxWidth: '71px' }}
+        />
+      </Box>
+      <Box direction="column" style={{ maxWidth: '97px' }}>
+        <Text size="small">Unit</Text>
+        <Select
+          options={['CS', 'EA']}
+          value={unit}
+          onChange={({ option }) => setUnit(option)}
+        />
+      </Box>
     </Box>
   )
 }
 
 const CartMenu = (props: { onClickOutside: () => void }) => {
-  // const [open, setOpen] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>()
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [scrollRef.current])
 
   const cartDocs = useCartDocService()
 
@@ -62,9 +81,13 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
           justify="between"
         >
           <Text margin={{ left: 'small' }}>Cart</Text>
-          <Button icon={<FormClose />} />
+          <Button icon={<FormClose />} onClick={props.onClickOutside} />
         </Box>
-        <Box overflow="auto" style={{ display: 'block' }}>
+        <Box
+          overflow="auto"
+          style={{ display: 'block' }}
+          ref={scrollRef as any}
+        >
           {cartDocs.status === 'loaded' &&
             cartDocs.payload.data &&
             cartDocs.payload.data.map((row: string[], idx: number) => (
@@ -75,7 +98,7 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
                 pad="small"
                 justify="between"
               >
-                <Box direction="column">
+                <Box direction="column" pad={{ right: 'small' }}>
                   <Text size="small" title="brand name">
                     {row[0]}
                   </Text>
@@ -109,7 +132,12 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
                 <Box justify="between" direction="row" align="center">
                   <Quantity />
 
-                  <Button icon={<Trash />} hoverIndicator />
+                  <ProductPriceCart price={row[5]} />
+                  <Button
+                    icon={<Trash />}
+                    margin={{ top: '20px' }}
+                    hoverIndicator
+                  />
                 </Box>
               </Box>
             ))}

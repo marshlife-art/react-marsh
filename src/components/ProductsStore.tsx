@@ -16,6 +16,7 @@ import { ProductDoc } from '../types/Product'
 import { Cart } from 'grommet-icons'
 import Loading from './Loading'
 import { addToCart } from '../services/useCartService'
+import { ProductPriceAndUnit } from './ProductPrice'
 
 interface ProductProps {
   row: string[]
@@ -43,31 +44,7 @@ const PROPERTY_MAP: { [index: string]: string } = {
   3: '70%+ organic'
 }
 
-function ProductPrice(props: { price: string }) {
-  const [a, b] = props.price.split('.')
-
-  return (
-    <Box direction="row" justify="center" title="price">
-      <Text size="xlarge">$</Text>
-      <Text size="xlarge" weight="bold">
-        {a.replace('$', '')}
-      </Text>
-      <Text
-        as="sup"
-        size="medium"
-        style={{
-          textDecoration: 'underline',
-          marginLeft: '3px',
-          fontStyle: 'italic'
-        }}
-      >
-        {b}
-      </Text>
-    </Box>
-  )
-}
-
-function PropertyButton(props: { property: string }) {
+function ProductProperty(props: { property: string }) {
   const [open, setOpen] = useState(false)
   const ref = useRef()
 
@@ -150,7 +127,7 @@ function Product(props: ProductProps) {
                   // avoid blank stringz
                   return null
                 } else {
-                  return <PropertyButton key={r} property={r} />
+                  return <ProductProperty key={r} property={r} />
                 }
               })}
             </Box>
@@ -158,25 +135,12 @@ function Product(props: ProductProps) {
         </TableCell>
 
         <TableCell>
-          <Box direction="column" pad={{ vertical: 'small' }}>
-            {row[5] === row[6] ? (
-              <>
-                <ProductPrice price={row[5]} />
-                <Box gap="small" direction="row">
-                  <Text title="size" size="small">
-                    {row[3]}
-                  </Text>
-                </Box>
-              </>
-            ) : (
-              <>
-                <ProductPrice price={row[5]} />
-                <Text size="small" title="unit price each" textAlign="center">
-                  {row[6]} / {row[3]}
-                </Text>
-              </>
-            )}
-          </Box>
+          <ProductPriceAndUnit
+            hasUnitPrice={row[5] === row[6]}
+            size={row[3]}
+            unitPrice={row[6]}
+            price={row[5]}
+          />
         </TableCell>
 
         <TableCell>
