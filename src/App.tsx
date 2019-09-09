@@ -7,9 +7,9 @@ import {
 } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
-import { Grommet, Box, Grid, Button, Text, Stack } from 'grommet'
+import { Grommet, Box, Grid, Button, Text } from 'grommet'
 import { grommet, base } from 'grommet/themes'
-import { Cart, Gremlin, Search, Close } from 'grommet-icons'
+import { Gremlin, Search, Close } from 'grommet-icons'
 
 import { RootState } from './redux'
 import { UserServiceProps } from './redux/session/reducers'
@@ -24,6 +24,7 @@ import { SearchInput } from './components/SearchInput'
 import { Store } from './store/Store'
 import styled from 'styled-components'
 import Loading from './components/Loading'
+import CartButton from './components/CartButton'
 
 const StickyBox = styled(Box)`
   position: sticky;
@@ -119,19 +120,7 @@ const App: React.FC<Props> = (props: Props) => {
                   active={sidebar === 'cart'}
                   hoverIndicator
                 >
-                  <Stack anchor="top-right">
-                    <Box margin="small">
-                      <Cart />
-                    </Box>
-                    <Box
-                      background="brand"
-                      pad={{ horizontal: 'xsmall' }}
-                      style={{ marginTop: '-16px', marginRight: '6px' }}
-                      round
-                    >
-                      <Text size="xsmall">6</Text>
-                    </Box>
-                  </Stack>
+                  <CartButton />
                 </Button>
               </Box>
             </StickyBox>

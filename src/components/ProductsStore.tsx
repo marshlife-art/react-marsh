@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   Box,
   InfiniteScroll,
@@ -15,6 +15,7 @@ import { Service } from '../types/Service'
 import { ProductDoc } from '../types/Product'
 import { Cart } from 'grommet-icons'
 import Loading from './Loading'
+import { addToCart } from '../services/useCartService'
 
 interface ProductProps {
   row: string[]
@@ -101,6 +102,20 @@ function PropertyButton(props: { property: string }) {
 
 function Product(props: ProductProps) {
   const { row } = props
+  const [onAddedMsg, setOnAddedMsg] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    let timeout: number
+    if (onAddedMsg !== undefined) {
+      timeout = window.setTimeout(() => {
+        setOnAddedMsg(undefined)
+      }, 5000)
+    }
+    return () => {
+      timeout && window.clearTimeout(timeout)
+    }
+  }, [onAddedMsg])
+
   return (
     /*  0 Long Name
         1 Advertising Description
@@ -165,14 +180,18 @@ function Product(props: ProductProps) {
         </TableCell>
 
         <TableCell>
-          <Box pad={{ vertical: 'small' }}>
+          <Box pad={{ vertical: 'small' }} direction="column">
             <Button
               plain={false}
               icon={<Cart />}
-              onClick={() => {}}
+              onClick={() => {
+                addToCart(row)
+                setOnAddedMsg('Added!')
+              }}
               hoverIndicator
             />
           </Box>
+          <Text size="small">{onAddedMsg}</Text>
         </TableCell>
       </>
     )

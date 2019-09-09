@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Grid, Select, Button } from 'grommet'
+import { Box, Grid, Button, Accordion, AccordionPanel } from 'grommet'
 
 import { Page } from '../types/Page'
 import {
@@ -65,6 +65,11 @@ export function Admin() {
     }
   }
 
+  const sidePanelCollections: Array<'' | 'pages' | 'products_wholesale'> = [
+    'pages',
+    'products_wholesale'
+  ]
+
   return (
     <Box gridArea="main" align="stretch" justify="start" fill>
       <Grid
@@ -78,7 +83,56 @@ export function Admin() {
         gap="small"
       >
         <Box gridArea="side" fill>
-          <Box pad={{ left: 'medium' }}>
+          <Accordion
+            onActive={(activeIndexes: number[]) => {
+              setSelectedDocID(undefined)
+              setSelectedPage(undefined)
+              setCollection(sidePanelCollections[activeIndexes[0]])
+            }}
+          >
+            {sidePanelCollections.map((collection: string, idx: number) => (
+              <AccordionPanel
+                label={collection}
+                key={`sidePanel${idx}`}
+                style={{ wordBreak: 'break-all' }}
+              >
+                {allDocs.status === 'loaded' && (
+                  <>
+                    {allDocs.payload.rows.map(row => (
+                      <Button
+                        key={row.id}
+                        color="dark-1"
+                        hoverIndicator
+                        onClick={() => setSelectedDocID(row.id)}
+                      >
+                        <Box
+                          pad={{ horizontal: 'medium', vertical: 'small' }}
+                          border={
+                            selectedDocID === row.id && {
+                              side: 'left',
+                              color: 'border',
+                              size: 'large'
+                            }
+                          }
+                        >
+                          {row.id}
+                        </Box>
+                      </Button>
+                    ))}
+                    <Box pad="medium">
+                      <Button
+                        plain={false}
+                        icon={<Add />}
+                        onClick={() => newAction()}
+                      />
+                    </Box>
+                  </>
+                )}
+              </AccordionPanel>
+            ))}
+          </Accordion>
+
+          {/* <Box pad={{ left: 'medium' }}>
             <Select
               options={['pages', 'products_wholesale']}
               placeholder="Collections"
@@ -89,46 +143,9 @@ export function Admin() {
                 setCollection(option)
               }}
             />
-          </Box>
-
-          {allDocs.status === 'loaded' && (
-            <>
-              {allDocs.payload.rows.map(row => (
-                <Button
-                  key={row.id}
-                  color="dark-1"
-                  hoverIndicator
-                  onClick={() => setSelectedDocID(row.id)}
-                >
-                  <Box
-                    pad={{ horizontal: 'medium', vertical: 'small' }}
-                    border={
-                      selectedDocID === row.id && {
-                        side: 'left',
-                        color: 'border',
-                        size: 'large'
-                      }
-                    }
-                  >
-                    {row.id}
-                  </Box>
-                </Button>
-              ))}
-              <Box pad={{ left: 'medium', top: 'medium' }}>
-                <Button
-                  plain={false}
-                  icon={<Add />}
-                  onClick={() => newAction()}
-                />
-                {/* <Text size="small" textAlign="end">
-                  {allDocs.payload.total_rows === 1
-                    ? `1 ${collection.replace(/s$/, '')}`
-                    : `${allDocs.payload.total_rows} ${collection}`}
-                </Text> */}
-              </Box>
-            </>
-          )}
+          </Box> */}
         </Box>
+
         <Box gridArea="main" fill>
           {collection === 'pages' && selectedPage && (
             <PageEditor

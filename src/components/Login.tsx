@@ -59,7 +59,13 @@ function Login(props: Props) {
     <Box fill align="center" justify="center">
       <Box width="medium">
         <Form onSubmit={doLogin}>
-          <FormField label="username" name="username" type="text" required />
+          <FormField
+            label="username"
+            name="username"
+            type="text"
+            required
+            autoFocus
+          />
           <FormField
             label="password"
             name="password"
