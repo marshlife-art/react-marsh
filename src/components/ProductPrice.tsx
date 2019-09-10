@@ -32,7 +32,12 @@ function ProductPriceAndUnit(props: {
   unitPrice: string
 }) {
   return (
-    <Box direction="column" pad={{ vertical: 'small' }}>
+    <Box
+      direction="column"
+      pad={{ vertical: 'small' }}
+      width="130px"
+      align="center"
+    >
       {props.hasUnitPrice ? (
         <>
           <ProductPrice price={props.price} />
@@ -43,11 +48,9 @@ function ProductPriceAndUnit(props: {
       ) : (
         <>
           <ProductPrice price={props.price} />
-          <Box gap="small" direction="row">
-            <Text title="size" size="small">
-              {props.size}
-            </Text>
-          </Box>
+          <Text title="size" size="small">
+            {props.size}
+          </Text>
         </>
       )}
     </Box>
