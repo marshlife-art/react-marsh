@@ -2,35 +2,45 @@ import { useEffect, useState } from 'react'
 import PouchDB from 'pouchdb'
 
 import { Service } from '../types/Service'
-import { CartDoc } from '../types/Cart'
+import { CartDoc, LineItem } from '../types/Cart'
+import { productMap } from '../util/utilz'
 
 // const DB_URL = 'http://localhost:5984/'
 
-const useCartPutService = (
-  doc: CartDoc | undefined,
-  doSave: boolean,
-  updateRev: (rev: string) => void
-) => {
-  const [result, setResult] = useState<Service<PouchDB.Core.Response>>({
-    status: 'loading'
-  })
+// const useCartPutService = (
+//   doc: CartDoc | undefined,
+//   doSave: boolean,
+//   updateRev: (rev: string) => void
+// ) => {
+//   const [result, setResult] = useState<Service<PouchDB.Core.Response>>({
+//     status: 'loading'
+//   })
 
-  useEffect(() => {
-    if (!doSave || doc === undefined) {
-      return
-    }
-    const db = new PouchDB('cart') // local #TODO: add remote sync
-    console.log('useCartPutService gonna save doc:', doc)
-    db.put(doc)
-      .then(response => {
-        setResult({ status: 'saved', payload: response })
-        updateRev(response.rev)
-      })
-      .catch(error => setResult({ ...error }))
-  }, [doc, doSave, updateRev])
+//   useEffect(() => {
+//     if (!doSave || doc === undefined) {
+//       return
+//     }
+//     const db = new PouchDB('cart') // local #TODO: add remote sync
+//     console.log('useCartPutService gonna save doc:', doc)
+//     db.put(doc)
+//       .then(response => {
+//         setResult({ status: 'saved', payload: response })
+//         updateRev(response.rev)
+//       })
+//       .catch(error => setResult({ ...error }))
+//   }, [doc, doSave, updateRev])
 
-  return result
-}
+//   return result
+// }
+
+/*  0 Long Name
+    1 Advertising Description
+    2 PK
+    3 Size
+    4 Unit Type
+    5 W/S Price
+    6 U Price
+    7->22 properties */
 
 const useCartDocService = () => {
   const [result, setResult] = useState<Service<CartDoc>>({
@@ -118,12 +128,17 @@ const useCartItemCount = () => {
 const addToCart = (row: string[]) => {
   const db = new PouchDB('cart')
 
+  console.log('[useCartService] addToCart row:', row)
   db.get('cart')
     .then((cartDoc: CartDoc) => {
       cartDoc.line_items = cartDoc.line_items || []
       cartDoc.line_items.push({
+        unit_type:
+          productMap('price', row) === productMap('unit_price', row)
+            ? 'EA'
+            : 'CS',
         quantity: 1,
-        price: parseFloat(row[5].replace('$', '')),
+        price: parseFloat(productMap('price', row).replace('$', '')),
         data: row
       })
       db.put(cartDoc)
@@ -156,11 +171,41 @@ const emptyCart = () => {
     })
 }
 
+const updateLineItem = (line_item: LineItem, idx: number) => {
+  const db = new PouchDB('cart')
+
+  db.get('cart')
+    .then((cartDoc: CartDoc) => {
+      if (cartDoc.line_items && cartDoc.line_items[idx] && line_item.data) {
+        if (line_item.unit_type === 'CS') {
+          line_item.price = parseFloat(
+            (
+              line_item.quantity *
+              parseFloat(line_item.data[5].replace('$', ''))
+            ).toFixed(2)
+          )
+        } else {
+          line_item.price = parseFloat(
+            (
+              line_item.quantity *
+              parseFloat(line_item.data[6].replace('$', ''))
+            ).toFixed(2)
+          )
+        }
+        cartDoc.line_items[idx] = line_item
+        return db.put(cartDoc)
+      }
+      throw new Error('no line item found')
+    })
+    .catch(error => console.warn('addToCart caught error:', error))
+}
+
 export {
-  useCartPutService,
+  // useCartPutService,
   useCartDocService,
   useCartItemCount,
   addToCart,
   removeItemFromCart,
-  emptyCart
+  emptyCart,
+  updateLineItem
 }

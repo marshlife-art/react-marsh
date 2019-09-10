@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 // import { ThunkDispatch } from 'redux-thunk'
 // import { connect } from 'react-redux'
 // import styled from 'styled-components'
@@ -6,12 +6,14 @@ import { Box, Text, Button, Layer, TextInput, Select } from 'grommet'
 import {
   useCartDocService,
   removeItemFromCart,
-  emptyCart
+  emptyCart,
+  updateLineItem
 } from '../services/useCartService'
 import { FormClose, Trash } from 'grommet-icons'
-import { ProductPriceCart } from './ProductPrice'
+import { ProductPriceAndUnit } from './ProductPrice'
 import { ProductProperty } from './ProductProperty'
-import { LineItem } from '../types/Cart'
+import { LineItem, UnitType } from '../types/Cart'
+import { productMap, productPropMapFn } from '../util/utilz'
 
 // import { StyledLink } from './StyledLink'
 
@@ -29,13 +31,24 @@ import { LineItem } from '../types/Cart'
 // }
 // props: CartMenuProps & DispatchProps
 
-const Quantity = () => {
-  const [qty, setQty] = React.useState(1)
+const Quantity = (props: { line_item: LineItem; idx: number }) => {
+  const [qty, setQty] = useState(props.line_item.quantity)
+  const [unit, setUnit] = useState(props.line_item.unit_type)
 
-  const [unit, setUnit] = React.useState('CS')
+  const onQtyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(event.target.value)
+    const quantity = isNaN(val) || val < 1 ? 1 : val
+    setQty(quantity)
+    updateLineItem({ ...props.line_item, quantity }, props.idx)
+  }
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setQty(parseInt(event.target.value))
+  const onUnitChange = (unit_type: UnitType) => {
+    setUnit(unit_type)
+    updateLineItem({ ...props.line_item, unit_type }, props.idx)
+  }
+
+  const hasUnitPrice =
+    props.line_item.data && props.line_item.data[5] !== props.line_item.data[6]
 
   return (
     <Box direction="row">
@@ -43,20 +56,25 @@ const Quantity = () => {
         <Text size="small">Quantity</Text>
         <TextInput
           type="number"
+          min={1}
+          step={1}
+          max={999}
           value={qty}
-          onChange={onChange}
+          onChange={onQtyChange}
           placeholder="Quantity"
           style={{ maxWidth: '71px' }}
         />
       </Box>
-      <Box direction="column" style={{ maxWidth: '97px' }}>
-        <Text size="small">Unit</Text>
-        <Select
-          options={['CS', 'EA']}
-          value={unit}
-          onChange={({ option }) => setUnit(option)}
-        />
-      </Box>
+      {hasUnitPrice && (
+        <Box direction="column" style={{ maxWidth: '97px' }}>
+          <Text size="small">Unit</Text>
+          <Select
+            options={['CS', 'EA']}
+            value={unit}
+            onChange={({ option }) => onUnitChange(option)}
+          />
+        </Box>
+      )}
     </Box>
   )
 }
@@ -118,10 +136,10 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
                   >
                     <Box direction="column" pad={{ right: 'small' }}>
                       <Text size="small" title="brand name">
-                        {row[0]}
+                        {productMap('name', row)}
                       </Text>
                       <Text size="medium" title="description">
-                        {row[1]}
+                        {productMap('description', row)}
                       </Text>
                       <Box
                         direction="row"
@@ -130,9 +148,9 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
                         height="24px"
                       >
                         <Text size="xsmall" title="package count">
-                          {row[2]}ct.
+                          {productMap('pk', row)}ct.
                         </Text>
-                        {row.slice(7, 22).map((r, i) => {
+                        {productPropMapFn(row).map((r, i) => {
                           if (!r || /^\s*$/.test(r)) {
                             // avoid blank stringz
                             return null
@@ -142,10 +160,23 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
                         })}
                       </Box>
                     </Box>
-                    <Box justify="between" direction="row" align="center">
-                      <Quantity />
+                    <Box
+                      justify="between"
+                      direction="row"
+                      align="center"
+                      gap="small"
+                    >
+                      <Quantity line_item={line_item} idx={idx} />
 
-                      <ProductPriceCart price={row[5]} />
+                      <ProductPriceAndUnit
+                        hasUnitPrice={
+                          productMap('price', row) !==
+                          productMap('unit_price', row)
+                        }
+                        size={productMap('size', row)}
+                        unitPrice={productMap('unit_price', row)}
+                        price={productMap('price', row)}
+                      />
                       <Button
                         icon={<Trash color="status-critical" />}
                         margin={{ top: '20px' }}
@@ -169,7 +200,7 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
             direction="row"
             gap="medium"
           >
-            {cartDocs.status === 'loaded' && cartDocs.payload.line_items && (
+            {/* {cartDocs.status === 'loaded' && cartDocs.payload.line_items && (
               <Box direction="column">
                 <Text>Quantity</Text>
                 <Text size="large">
@@ -180,12 +211,12 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
                   )}
                 </Text>
               </Box>
-            )}
+            )} */}
 
             {cartDocs.status === 'loaded' && cartDocs.payload.line_items && (
-              <Box direction="column">
+              <Box direction="column" pad={{ right: 'medium' }}>
                 <Text>Total</Text>
-                <Text size="large" weight="bold">
+                <Text size="xlarge" weight="bold">
                   $
                   {cartDocs.payload.line_items
                     .reduce(

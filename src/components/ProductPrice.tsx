@@ -33,7 +33,14 @@ function ProductPriceAndUnit(props: {
 }) {
   return (
     <Box direction="column" pad={{ vertical: 'small' }}>
-      {!props.hasUnitPrice ? (
+      {props.hasUnitPrice ? (
+        <>
+          <ProductPrice price={props.price} />
+          <Text size="small" title="unit price each" textAlign="center">
+            {props.unitPrice} / {props.size}
+          </Text>
+        </>
+      ) : (
         <>
           <ProductPrice price={props.price} />
           <Box gap="small" direction="row">
@@ -42,27 +49,20 @@ function ProductPriceAndUnit(props: {
             </Text>
           </Box>
         </>
-      ) : (
-        <>
-          <ProductPrice price={props.price} />
-          <Text size="small" title="unit price each" textAlign="center">
-            {props.unitPrice} / {props.size}
-          </Text>
-        </>
       )}
     </Box>
   )
 }
 
-function ProductPriceCart(props: { price: string }) {
-  return (
-    <Box direction="column" pad={{ left: 'small' }}>
-      <Text size="small">Price</Text>
-      <Box style={{ minHeight: '45px' }} justify="center">
-        <ProductPrice price={props.price} />
-      </Box>
-    </Box>
-  )
-}
+// function ProductPriceCart(props: { price: string }) {
+//   return (
+//     <Box direction="column" pad={{ left: 'small' }}>
+//       <Text size="small">Price</Text>
+//       <Box style={{ minHeight: '45px' }} justify="center">
+//         <ProductPrice price={props.price} />
+//       </Box>
+//     </Box>
+//   )
+// }
 
-export { ProductPriceCart, ProductPriceAndUnit }
+export { ProductPriceAndUnit }

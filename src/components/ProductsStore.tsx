@@ -17,6 +17,7 @@ import Loading from './Loading'
 import { addToCart } from '../services/useCartService'
 import { ProductPriceAndUnit } from './ProductPrice'
 import { ProductProperty } from './ProductProperty'
+import { productMap, productPropMapFn } from '../util/utilz'
 
 interface ProductProps {
   row: string[]
@@ -53,16 +54,16 @@ function Product(props: ProductProps) {
         <TableCell>
           <Box direction="column" pad={{ vertical: 'small' }}>
             <Text size="large" title="brand name">
-              {row[0]}
+              {productMap('name', row)}
             </Text>
             <Text size="xlarge" title="description">
-              {row[1]}
+              {productMap('description', row)}
             </Text>
             <Box direction="row" gap="small" align="center">
               <Text size="medium" title="package count">
-                {row[2]}ct.
+                {productMap('pk', row)}ct.
               </Text>
-              {row.slice(7, 22).map(r => {
+              {productPropMapFn(row).map(r => {
                 if (!r || /^\s*$/.test(r)) {
                   // avoid blank stringz
                   return null
@@ -76,10 +77,12 @@ function Product(props: ProductProps) {
 
         <TableCell>
           <ProductPriceAndUnit
-            hasUnitPrice={row[5] === row[6]}
-            size={row[3]}
-            unitPrice={row[6]}
-            price={row[5]}
+            hasUnitPrice={
+              productMap('price', row) !== productMap('unit_price', row)
+            }
+            size={productMap('size', row)}
+            unitPrice={productMap('unit_price', row)}
+            price={productMap('price', row)}
           />
         </TableCell>
 
@@ -107,19 +110,6 @@ interface ProductsStoreProps {
   productDocResult: Service<ProductDoc>
 }
 
-function productMap(prod: string[]) {
-  return [
-    prod[2].trim(),
-    prod[3].trim(),
-    prod[4],
-    prod[5],
-    prod[6],
-    prod[8],
-    prod[9],
-    ...prod.slice(11, prod.length)
-  ]
-}
-
 function ProductsStore(props: ProductsStoreProps) {
   const { selectedCat, productDocResult } = props
 
@@ -127,7 +117,16 @@ function ProductsStore(props: ProductsStoreProps) {
     productDocResult.status === 'loaded' && productDocResult.payload.data
       ? productDocResult.payload.data
           .filter(product => product[10] === selectedCat)
-          .map(productMap)
+          .map((prod: string[]) => [
+            prod[2].trim(),
+            prod[3].trim(),
+            prod[4],
+            prod[5],
+            prod[6],
+            prod[8],
+            prod[9],
+            ...prod.slice(11, prod.length)
+          ])
       : undefined
 
   return (
