@@ -8,6 +8,7 @@ export interface ProductMap {
   unit_price: number[]
   property: number[]
   category: number[]
+  search: number[]
 }
 
 export type ProductMapPartial = Partial<ProductMap>

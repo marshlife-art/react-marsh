@@ -10,11 +10,13 @@ import {
 import { Add } from 'grommet-icons'
 import PageEditor from './editors/PageEditor'
 import ProductsWholesaleEditor from './editors/ProductsWholesaleEditor'
+import { OrderDoc } from '../types/Order'
+import OrderEditor from './editors/OrderEditor'
+
+type KnownCollectionNames = '' | 'pages' | 'products_wholesale' | 'orders'
 
 export function Admin() {
-  const [collection, setCollection] = useState<
-    'pages' | 'products_wholesale' | ''
-  >('')
+  const [collection, setCollection] = useState<KnownCollectionNames>('')
   const [selectedDocID, setSelectedDocID] = useState<string>()
 
   const allDocs = useAllDocumentsService(collection)
@@ -65,9 +67,10 @@ export function Admin() {
     }
   }
 
-  const sidePanelCollections: Array<'' | 'pages' | 'products_wholesale'> = [
+  const sidePanelCollections: Array<KnownCollectionNames> = [
     'pages',
-    'products_wholesale'
+    'products_wholesale',
+    'orders'
   ]
 
   return (
@@ -92,7 +95,7 @@ export function Admin() {
           >
             {sidePanelCollections.map((collection: string, idx: number) => (
               <AccordionPanel
-                label={collection}
+                label={/products/.test(collection) ? 'products' : collection}
                 key={`sidePanel${idx}`}
                 style={{ wordBreak: 'break-all' }}
               >
@@ -161,6 +164,7 @@ export function Admin() {
               {...{ actionModalOpen, setActionModalOpen, selectedDocID }}
             />
           )}
+          {collection === 'orders' && <OrderEditor doc={doc} />}
         </Box>
       </Grid>
     </Box>

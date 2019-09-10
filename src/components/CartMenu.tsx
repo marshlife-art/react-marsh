@@ -3,6 +3,8 @@ import React, { useRef, useEffect, useState } from 'react'
 // import { connect } from 'react-redux'
 // import styled from 'styled-components'
 import { Box, Text, Button, Layer, TextInput, Select } from 'grommet'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
+
 import {
   useCartDocService,
   removeItemFromCart,
@@ -79,7 +81,11 @@ const Quantity = (props: { line_item: LineItem; idx: number }) => {
   )
 }
 
-const CartMenu = (props: { onClickOutside: () => void }) => {
+interface CartMenuProps {
+  onClickOutside: () => void
+}
+
+const CartMenu = (props: CartMenuProps & RouteComponentProps) => {
   const scrollRef = useRef<HTMLDivElement>()
   const scrollRefElem = scrollRef.current
 
@@ -249,7 +255,15 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
               }
             }}
           />
-          <Button primary label="Checkout" hoverIndicator />
+          <Button
+            primary
+            label="Checkout"
+            onClick={() => {
+              props.onClickOutside()
+              props.history.push('/checkout')
+            }}
+            hoverIndicator
+          />
         </Box>
       </Box>
     </Layer>
@@ -269,4 +283,4 @@ const CartMenu = (props: { onClickOutside: () => void }) => {
 //   mapDispatchToProps
 // )(CartMenu)
 
-export default CartMenu
+export default withRouter(CartMenu)

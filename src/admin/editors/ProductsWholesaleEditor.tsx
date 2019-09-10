@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Layer, Heading, Text, Button } from 'grommet'
+import { Box, Layer, Heading, Text, Button, TextInput } from 'grommet'
 import { FormClose } from 'grommet-icons'
 import Papa from 'papaparse'
 import styled from 'styled-components'
@@ -42,6 +42,9 @@ function ProductsWholesaleEditor(props: ProductsWholesaleEditorProps) {
   // const [columns, setColumns] = useState()
 
   const [productMap, setProductMap] = useState<ProductMapPartial>()
+
+  const [priceMultiplier, setPriceMultiplier] = useState(0.1)
+  // const [uintPriceMultiplier, setUnitPriceMultiplier] = useState(0.00)
 
   function setProductMapForKey(key: keyof ProductMap, value: number[]) {
     setProductMap({ ...productMap, ...{ [key]: value } })
@@ -209,9 +212,35 @@ function ProductsWholesaleEditor(props: ProductsWholesaleEditorProps) {
                         direction="row"
                         gap="medium"
                         justify="between"
+                        align="center"
                         key={`keymap${key}`}
                       >
                         <Text key={`keymap${key}`}>{key}</Text>
+
+                        {key === 'price' && (
+                          <Box
+                            direction="column"
+                            margin={{ horizontal: 'small' }}
+                            align="center"
+                          >
+                            <Text size="xsmall">multiplier</Text>
+                            <TextInput
+                              id="text-input"
+                              type="number"
+                              max="1"
+                              step="0.01"
+                              value={priceMultiplier}
+                              onChange={event =>
+                                setPriceMultiplier(
+                                  parseFloat(event.target.value)
+                                )
+                              }
+                              size="small"
+                              style={{ maxWidth: '70px' }}
+                            />
+                          </Box>
+                        )}
+
                         <ProductMapSelect
                           optz={
                             header && header.length

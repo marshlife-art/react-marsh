@@ -25,6 +25,7 @@ import { Store } from './store/Store'
 import styled from 'styled-components'
 import Loading from './components/Loading'
 import CartButton from './components/CartButton'
+import Checkout from './store/Checkout'
 
 const StickyBox = styled(Box)`
   position: sticky;
@@ -146,6 +147,7 @@ const App: React.FC<Props> = (props: Props) => {
                 ) : (
                   <Redirect from="/admin" to="/login" />
                 )}
+                <Route exact path="/checkout" component={Checkout} />
               </Switch>
             </Box>
 
