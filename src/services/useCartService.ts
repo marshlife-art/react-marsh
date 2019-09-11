@@ -55,11 +55,22 @@ const useCartDocService = () => {
         console.log('useCartService db.get error:', error)
         if (error.name === 'not_found') {
           console.log('not_found! ...try harder?!')
-          db.put({ _id: 'cart' }).then(response => {
-            db.get('cart').then(doc =>
-              setResult({ status: 'loaded', payload: doc as CartDoc })
+          db.put({ _id: 'cart' })
+            .then(response => {
+              db.get('cart')
+                .then(doc =>
+                  setResult({ status: 'loaded', payload: doc as CartDoc })
+                )
+                .catch(error =>
+                  console.warn(
+                    'useCartDocService get cart caught error:',
+                    error
+                  )
+                )
+            })
+            .catch(error =>
+              console.warn('useCartDocService put cart caught error:', error)
             )
-          })
         } else {
           setResult({ ...error })
         }
@@ -81,7 +92,7 @@ const useCartDocService = () => {
         // changes() was canceled
       })
       .on('error', err => {
-        console.log(err)
+        console.warn('useCartDocService caught error:', err)
       })
 
     return () => changes.cancel()
@@ -95,9 +106,28 @@ const useCartItemCount = () => {
 
   const db = new PouchDB('cart')
 
-  db.get('cart').then((doc: CartDoc) =>
-    setItemCount(doc.line_items ? doc.line_items.length : 0)
-  )
+  db.get('cart')
+    .then((doc: CartDoc) =>
+      setItemCount(doc.line_items ? doc.line_items.length : 0)
+    )
+    .catch(error => {
+      console.log(
+        'useCartItemCount get cart caught error:',
+        error,
+        ' GONNA TRY HARDER!'
+      )
+      db.put({ _id: 'cart' })
+        .then(response => {
+          db.get('cart')
+            .then(doc => setItemCount(0))
+            .catch(error =>
+              console.warn('useCartItemCount get cart caught error:', error)
+            )
+        })
+        .catch(error =>
+          console.warn('useCartDocService put cart caught error:', error)
+        )
+    })
 
   useEffect(() => {
     const changes = db
@@ -116,7 +146,7 @@ const useCartItemCount = () => {
         // changes() was canceled
       })
       .on('error', err => {
-        console.log(err)
+        console.warn('useCartItemCount changes caught error:', err)
       })
 
     return () => changes.cancel()
