@@ -1,101 +1,121 @@
 import React, { useState } from 'react'
 import { Switch, Route } from 'react-router'
+import { base } from 'grommet/themes'
 
 import Checkout from './Checkout'
 import { ProductsWholesale } from './ProductsWholesale'
-import { Grid, Box, Button, Text } from 'grommet'
+import { Box, Button, Text, DropButton } from 'grommet'
 import { StickyBox } from '../components/StickyBox'
 import { StyledLink } from '../components/StyledLink'
-import { Add, Close, Search, Gremlin } from 'grommet-icons'
+import { Close, Search, Gremlin } from 'grommet-icons'
 import { SearchInput } from '../components/SearchInput'
 import CartButton from '../components/CartButton'
 import CartMenu from '../components/CartMenu'
 import UserMenu from '../components/UserMenu'
+import styled from 'styled-components'
 
-type SidebarStates = undefined | 'cart' | 'user'
+const StoreHeader = styled(Box)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 106px;
+  z-index: 2;
+`
+
+const SearchBox = styled(Box)`
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: ${base.global.colors.white};
+`
 
 function Store() {
-  const [sidebar, setSidebar] = useState<SidebarStates>(undefined)
+  const [showCart, setShowCart] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
 
   return (
-    <Grid
-      fill
-      rows={['auto', 'flex']}
-      columns={['flex', 'auto']}
-      areas={[
-        { name: 'header', start: [0, 0], end: [1, 0] },
-        { name: 'main', start: [0, 1], end: [0, 1] },
-        { name: 'sidebar', start: [1, 1], end: [1, 1] }
-      ]}
-      style={{ minHeight: '100vh' }}
-    >
-      <StickyBox
-        gridArea="header"
-        direction="row"
+    <>
+      {showSearch ? (
+        <SearchBox
+          direction="row"
+          margin={{ horizontal: 'medium' }}
+          pad={{ vertical: 'small' }}
+          style={{ width: '500px' }}
+        >
+          <Button
+            onClick={() => setShowSearch(false)}
+            icon={<Close />}
+            active={showSearch}
+            hoverIndicator
+          />
+          <SearchInput />
+        </SearchBox>
+      ) : (
+        <StickyBox
+          top="0px"
+          direction="row"
+          pad={{ horizontal: 'medium', vertical: 'small' }}
+          style={{ width: `${24 + 48}px` }}
+        >
+          <Button
+            onClick={() => setShowSearch(true)}
+            icon={<Search />}
+            active={showSearch}
+            hoverIndicator
+          />
+        </StickyBox>
+      )}
+
+      <StoreHeader
+        direction="column"
         align="center"
         justify="between"
-        pad={{ horizontal: 'medium', vertical: 'small' }}
+        margin={{ right: 'medium' }}
+        pad={{ horizontal: 'small', vertical: 'small' }}
+        background="dark-1"
       >
-        <Box width="169px" direction="row" align="center">
-          <Text>
-            <StyledLink to="/" color="dark-1">
+        <Box direction="row" align="start">
+          <Text size="large">
+            <StyledLink to="/" color="light-1">
               MARSH
             </StyledLink>
           </Text>
         </Box>
 
         <Box direction="row" align="center" justify="between">
-          <StyledLink
+          {/* <StyledLink
             to="/store"
             color="dark-1"
             style={{ paddingRight: '1em', paddingLeft: '0.5em' }}
           >
             Store
-          </StyledLink>
+          </StyledLink> */}
 
-          {showSearch && <SearchInput />}
-          <Button
-            onClick={() => setShowSearch(!showSearch)}
-            icon={showSearch ? <Close /> : <Search />}
-            active={showSearch}
-            hoverIndicator
-          />
-
-          <Button
-            onClick={() => setSidebar(sidebar === 'user' ? undefined : 'user')}
+          <DropButton
             icon={<Gremlin />}
-            active={sidebar === 'user'}
+            dropAlign={{ top: 'bottom', right: 'right' }}
+            dropContent={<UserMenu />}
             hoverIndicator
           />
+
           <Button
-            onClick={() => setSidebar(sidebar === 'cart' ? undefined : 'cart')}
-            active={sidebar === 'cart'}
+            onClick={() => setShowCart(!showCart)}
+            active={showCart}
             hoverIndicator
           >
             <CartButton />
           </Button>
-          {sidebar === 'cart' && (
-            <CartMenu onClickOutside={() => setSidebar(undefined)} />
-          )}
+          {showCart && <CartMenu onClickOutside={() => setShowCart(false)} />}
         </Box>
-      </StickyBox>
+      </StoreHeader>
 
-      <Box
-        gridArea="main"
-        justify="center"
-        align="center"
-        // style={{ minHeight: 'calc(100vh - 54px)' }}
-        fill
-      >
+      <Box justify="center" align="center" fill>
         <Switch>
           <Route exact path="/store" component={ProductsWholesale} />
           <Route exact path="/store/checkout" component={Checkout} />
         </Switch>
       </Box>
-
-      {sidebar === 'user' && <UserMenu onClick={() => setSidebar(undefined)} />}
-    </Grid>
+    </>
   )
 }
 

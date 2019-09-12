@@ -9,7 +9,7 @@ import { MenuLink } from './StyledLink'
 import { RootState } from '../redux'
 
 interface UserMenuProps {
-  onClick: () => void
+  onClick?: () => void
 }
 
 interface DispatchProps {
@@ -27,16 +27,7 @@ const UserMenuLink = (props: {
       onClick={() => props.onClick && props.onClick()}
       color="dark-1"
     >
-      <Box
-        pad={{ horizontal: 'medium', vertical: 'small' }}
-        border={{
-          side: 'right',
-          color: 'border',
-          size: 'large'
-        }}
-      >
-        {props.label}
-      </Box>
+      <Box pad={{ horizontal: 'medium', vertical: 'small' }}>{props.label}</Box>
     </MenuLink>
   )
 }
@@ -50,7 +41,7 @@ const UserMenu = (props: UserMenuProps & UserServiceProps & DispatchProps) => {
         { type: 'fadeIn', duration: 300 },
         { type: 'slideLeft', size: 'xlarge', duration: 150 }
       ]}
-      onClick={props.onClick}
+      onClick={() => props.onClick && props.onClick()}
     >
       {props.userService.user && props.userService.user.name ? (
         <>

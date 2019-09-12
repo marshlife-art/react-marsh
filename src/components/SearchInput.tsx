@@ -135,15 +135,15 @@ export class SearchInput extends Component<{}, SearchInputState> {
           style={
             suggestionOpen
               ? {
-                  borderRight: 'none',
-                  borderTopRightRadius: '0px',
+                  borderLeft: 'none',
+                  borderTopLeftRadius: '0px',
                   borderBottomLeftRadius: '0px',
                   borderBottomRightRadius: '0px'
                 }
               : {
-                  borderRight: 'none',
-                  borderTopRightRadius: '0px',
-                  borderBottomRightRadius: '0px'
+                  borderLeft: 'none',
+                  borderTopLeftRadius: '0px',
+                  borderBottomLeftRadius: '0px'
                 }
           }
         >

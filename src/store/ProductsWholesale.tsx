@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Button, Text } from 'grommet'
 import { FormNext } from 'grommet-icons'
+import { base } from 'grommet/themes'
 
 import { useAllDocumentsService } from '../services/usePageService'
 import { useProductDocService } from '../services/useProductServices'
 import { ProductsStore } from '../components/ProductsStore'
 import styled from 'styled-components'
 import Loading from '../components/Loading'
-import { StickyBox } from '../components/StickyBox'
+// import { StickyBox } from '../components/StickyBox'
 // import { useCartPutService } from '../services/useCartService';
 
 const BreadCrumb = styled(Text)`
+  background: ${base.global.colors.white};
   &:hover {
     cursor: pointer;
     text-decoration: underline;
@@ -18,6 +20,16 @@ const BreadCrumb = styled(Text)`
   /* &:hover:after {
     content: 'X';
   } */
+`
+
+const BreadCrumbBox = styled(Box)<{ top?: string }>`
+  position: sticky;
+  top: ${props => props.top || 0};
+  background: ${base.global.colors.white};
+  z-index: 1;
+`
+const BreadCrumbText = styled(Text)`
+  background: ${base.global.colors.white};
 `
 
 function ProductsWholesale() {
@@ -50,13 +62,14 @@ function ProductsWholesale() {
   }, [selectedDoc, productDocResult])
 
   return (
-    <Box pad={{ horizontal: 'medium' }} align="center" fill>
-      <StickyBox
+    <Box pad={{ horizontal: 'medium' }} fill>
+      <BreadCrumbBox
         direction="row"
-        width="full"
         gap="small"
-        margin={{ bottom: 'medium' }}
-        top="72px"
+        margin={{ bottom: 'medium', left: '52px' }}
+        pad={{ vertical: 'medium' }}
+        top="0px"
+        width="auto"
       >
         {selectedDoc && (
           <BreadCrumb
@@ -69,10 +82,10 @@ function ProductsWholesale() {
           </BreadCrumb>
         )}
         {selectedDoc && (
-          <Text>
+          <BreadCrumbText>
             {' '}
             <FormNext />{' '}
-          </Text>
+          </BreadCrumbText>
         )}
         {selectedDoc && (
           <BreadCrumb
@@ -84,13 +97,16 @@ function ProductsWholesale() {
           </BreadCrumb>
         )}
         {selectedDoc && selectedCat && (
-          <Text>
+          <BreadCrumbText>
             {' '}
             <FormNext />{' '}
-          </Text>
+          </BreadCrumbText>
         )}
-        {selectedDoc && selectedCat && <Text>{selectedCat}</Text>}
-      </StickyBox>
+        {selectedDoc && selectedCat && (
+          <BreadCrumbText>{selectedCat}</BreadCrumbText>
+        )}
+      </BreadCrumbBox>
+
       {!selectedDoc && (
         <Box
           pad={{ horizontal: 'medium', vertical: 'small' }}
@@ -117,6 +133,7 @@ function ProductsWholesale() {
               ))}
         </Box>
       )}
+
       {selectedDoc && productDocResult.status === 'loading' && <Loading />}
       {selectedDoc &&
         !selectedCat &&
@@ -140,6 +157,7 @@ function ProductsWholesale() {
               ))}
             </Box>
           ))}
+
       {selectedDoc && selectedCat && (
         <ProductsStore {...{ selectedCat, productDocResult }} />
       )}

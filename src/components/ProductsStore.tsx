@@ -124,7 +124,7 @@ function ProductsStore(props: ProductsStoreProps) {
       : undefined
 
   return (
-    <Box overflow="auto" width="large" justify="center">
+    <Box overflow="auto" width="large" justify="center" alignSelf="center">
       <InfiniteScroll
         renderMarker={marker => (
           <Box>
