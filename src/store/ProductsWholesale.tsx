@@ -28,8 +28,10 @@ const BreadCrumbBox = styled(Box)<{ top?: string }>`
   background: ${base.global.colors.white};
   z-index: 1;
 `
-const BreadCrumbText = styled(Text)`
-  background: ${base.global.colors.white};
+
+const CatCrumb = styled(Text)`
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 function ProductsWholesale() {
@@ -66,10 +68,10 @@ function ProductsWholesale() {
       <BreadCrumbBox
         direction="row"
         gap="small"
-        margin={{ bottom: 'medium', left: '52px' }}
+        margin={{ bottom: 'medium', left: '48px', right: '120px' }}
         pad={{ vertical: 'medium' }}
         top="0px"
-        width="auto"
+        justify="center"
       >
         {selectedDoc && (
           <BreadCrumb
@@ -82,10 +84,10 @@ function ProductsWholesale() {
           </BreadCrumb>
         )}
         {selectedDoc && (
-          <BreadCrumbText>
+          <Text>
             {' '}
             <FormNext />{' '}
-          </BreadCrumbText>
+          </Text>
         )}
         {selectedDoc && (
           <BreadCrumb
@@ -97,14 +99,12 @@ function ProductsWholesale() {
           </BreadCrumb>
         )}
         {selectedDoc && selectedCat && (
-          <BreadCrumbText>
+          <Text>
             {' '}
             <FormNext />{' '}
-          </BreadCrumbText>
+          </Text>
         )}
-        {selectedDoc && selectedCat && (
-          <BreadCrumbText>{selectedCat}</BreadCrumbText>
-        )}
+        {selectedDoc && selectedCat && <CatCrumb>{selectedCat}</CatCrumb>}
       </BreadCrumbBox>
 
       {!selectedDoc && (
