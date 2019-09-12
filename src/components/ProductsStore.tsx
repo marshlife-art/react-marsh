@@ -144,6 +144,7 @@ function ProductsStore(props: ProductsStoreProps) {
             renderMarker={marker => (
               <TableRow>
                 <TableCell colSpan={3}>
+                  {marker}
                   <Loading />
                 </TableCell>
               </TableRow>

@@ -36,6 +36,7 @@ function ProductsInfinite(props: ProductsInfiniteProps) {
             renderMarker={marker => (
               <TableRow color="brand">
                 <TableCell colSpan={5}>
+                  {marker}
                   <Loading />
                 </TableCell>
               </TableRow>
