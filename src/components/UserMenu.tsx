@@ -3,12 +3,12 @@ import { ThunkDispatch } from 'redux-thunk'
 import { connect } from 'react-redux'
 import { Box } from 'grommet'
 
-import { UserService } from '../redux/session/reducers'
+import { UserServiceProps } from '../redux/session/reducers'
 import { logout } from '../redux/session/actions'
 import { MenuLink } from './StyledLink'
+import { RootState } from '../redux'
 
 interface UserMenuProps {
-  userService: UserService
   onClick: () => void
 }
 
@@ -41,7 +41,7 @@ const UserMenuLink = (props: {
   )
 }
 
-const UserMenu = (props: UserMenuProps & DispatchProps) => {
+const UserMenu = (props: UserMenuProps & UserServiceProps & DispatchProps) => {
   return (
     <Box
       gridArea="sidebar"
@@ -67,6 +67,12 @@ const UserMenu = (props: UserMenuProps & DispatchProps) => {
   )
 }
 
+const mapStateToProps = (states: RootState): UserServiceProps => {
+  return {
+    userService: states.session.userService
+  }
+}
+
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<{}, {}, any>
 ): DispatchProps => {
@@ -76,6 +82,6 @@ const mapDispatchToProps = (
 }
 
 export default connect(
-  undefined,
+  mapStateToProps,
   mapDispatchToProps
 )(UserMenu)

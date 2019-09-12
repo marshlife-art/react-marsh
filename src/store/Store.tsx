@@ -1,147 +1,101 @@
-import React, { useState, useEffect } from 'react'
-import { Box, Button, Text } from 'grommet'
-import { FormNext } from 'grommet-icons'
+import React, { useState } from 'react'
+import { Switch, Route } from 'react-router'
 
-import { useAllDocumentsService } from '../services/usePageService'
-import { useProductDocService } from '../services/useProductServices'
-import { ProductsStore } from '../components/ProductsStore'
-import styled from 'styled-components'
-import Loading from '../components/Loading'
-// import { useCartPutService } from '../services/useCartService';
+import Checkout from './Checkout'
+import { ProductsWholesale } from './ProductsWholesale'
+import { Grid, Box, Button, Text } from 'grommet'
+import { StickyBox } from '../components/StickyBox'
+import { StyledLink } from '../components/StyledLink'
+import { Add, Close, Search, Gremlin } from 'grommet-icons'
+import { SearchInput } from '../components/SearchInput'
+import CartButton from '../components/CartButton'
+import CartMenu from '../components/CartMenu'
+import UserMenu from '../components/UserMenu'
 
-const BreadCrumb = styled(Text)`
-  &:hover {
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  /* &:hover:after {
-    content: 'X';
-  } */
-`
+type SidebarStates = undefined | 'cart' | 'user'
 
 function Store() {
-  const allDocs = useAllDocumentsService('products_wholesale', false)
-
-  const [selectedDoc, setSelectedDoc] = useState()
-  const [categories, setCategories] = useState<string[]>([])
-  const [selectedCat, setSelectedCat] = useState()
-
-  const productDocResult = useProductDocService(
-    'products_wholesale',
-    selectedDoc
-  )
-
-  // const headerDocResult = useProductDocService('products_wholesale', 'header')
-
-  useEffect(() => {
-    if (
-      !selectedDoc ||
-      productDocResult.status !== 'loaded' ||
-      !productDocResult.payload.data
-    ) {
-      return
-    }
-    setCategories(
-      productDocResult.payload.data
-        .map(p => p[10])
-        .filter((cat, index, arr) => arr.indexOf(cat) === index && cat !== '')
-    )
-  }, [selectedDoc, productDocResult])
+  const [sidebar, setSidebar] = useState<SidebarStates>(undefined)
+  const [showSearch, setShowSearch] = useState(false)
 
   return (
-    <Box pad={{ horizontal: 'medium' }} align="center" fill>
-      <Box
+    <Grid
+      fill
+      rows={['auto', 'flex']}
+      columns={['flex', 'auto']}
+      areas={[
+        { name: 'header', start: [0, 0], end: [1, 0] },
+        { name: 'main', start: [0, 1], end: [0, 1] },
+        { name: 'sidebar', start: [1, 1], end: [1, 1] }
+      ]}
+      style={{ minHeight: '100vh' }}
+    >
+      <StickyBox
+        gridArea="header"
         direction="row"
-        width="full"
-        gap="small"
-        margin={{ bottom: 'medium' }}
+        align="center"
+        justify="between"
+        pad={{ horizontal: 'medium', vertical: 'small' }}
       >
-        {selectedDoc && (
-          <BreadCrumb
-            onClick={() => {
-              setSelectedDoc(undefined)
-              setSelectedCat(undefined)
-            }}
+        <Box width="169px" direction="row" align="center">
+          <Text>
+            <StyledLink to="/" color="dark-1">
+              MARSH
+            </StyledLink>
+          </Text>
+        </Box>
+
+        <Box direction="row" align="center" justify="between">
+          <StyledLink
+            to="/store"
+            color="dark-1"
+            style={{ paddingRight: '1em', paddingLeft: '0.5em' }}
           >
             Store
-          </BreadCrumb>
-        )}
-        {selectedDoc && (
-          <Text>
-            {' '}
-            <FormNext />{' '}
-          </Text>
-        )}
-        {selectedDoc && (
-          <BreadCrumb
-            onClick={() => {
-              setSelectedCat(undefined)
-            }}
+          </StyledLink>
+
+          {showSearch && <SearchInput />}
+          <Button
+            onClick={() => setShowSearch(!showSearch)}
+            icon={showSearch ? <Close /> : <Search />}
+            active={showSearch}
+            hoverIndicator
+          />
+
+          <Button
+            onClick={() => setSidebar(sidebar === 'user' ? undefined : 'user')}
+            icon={<Gremlin />}
+            active={sidebar === 'user'}
+            hoverIndicator
+          />
+          <Button
+            onClick={() => setSidebar(sidebar === 'cart' ? undefined : 'cart')}
+            active={sidebar === 'cart'}
+            hoverIndicator
           >
-            {selectedDoc}
-          </BreadCrumb>
-        )}
-        {selectedDoc && selectedCat && (
-          <Text>
-            {' '}
-            <FormNext />{' '}
-          </Text>
-        )}
-        {selectedDoc && selectedCat && <Text>{selectedCat}</Text>}
-      </Box>
-      {!selectedDoc && (
-        <Box
-          pad={{ horizontal: 'medium', vertical: 'small' }}
-          width="medium"
-          alignSelf="center"
-        >
-          {allDocs.status === 'loaded' &&
-            allDocs.payload.rows
-              .filter(r => r.id !== 'header' && !/^_/.test(r.id))
-              .map((row, i) => (
-                <Box
-                  key={`row${i}`}
-                  pad={{ horizontal: 'medium', bottom: 'small' }}
-                >
-                  <Button
-                    fill
-                    color="dark-1"
-                    onClick={() => setSelectedDoc(row.id)}
-                    hoverIndicator
-                    style={{ textTransform: 'uppercase' }}
-                    label={row.id}
-                  />
-                </Box>
-              ))}
+            <CartButton />
+          </Button>
+          {sidebar === 'cart' && (
+            <CartMenu onClickOutside={() => setSidebar(undefined)} />
+          )}
         </Box>
-      )}
-      {selectedDoc && productDocResult.status === 'loading' && <Loading />}
-      {selectedDoc &&
-        !selectedCat &&
-        (productDocResult.status === 'loaded' &&
-          productDocResult.payload.data && (
-            <Box width="auto" alignSelf="center">
-              {categories.map((cat, i) => (
-                <Box
-                  key={`row${i}`}
-                  pad={{ horizontal: 'medium', bottom: 'small' }}
-                >
-                  <Button
-                    fill
-                    color="dark-1"
-                    onClick={() => setSelectedCat(cat)}
-                    hoverIndicator
-                    style={{ textTransform: 'uppercase' }}
-                    label={cat}
-                  />
-                </Box>
-              ))}
-            </Box>
-          ))}
-      {selectedDoc && selectedCat && (
-        <ProductsStore {...{ selectedCat, productDocResult }} />
-      )}
-    </Box>
+      </StickyBox>
+
+      <Box
+        gridArea="main"
+        justify="center"
+        align="center"
+        // style={{ minHeight: 'calc(100vh - 54px)' }}
+        fill
+      >
+        <Switch>
+          <Route exact path="/store" component={ProductsWholesale} />
+          <Route exact path="/store/checkout" component={Checkout} />
+        </Switch>
+      </Box>
+
+      {sidebar === 'user' && <UserMenu onClick={() => setSidebar(undefined)} />}
+    </Grid>
   )
 }
 

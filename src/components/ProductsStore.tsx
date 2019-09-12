@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  Box,
-  InfiniteScroll,
-  Table,
-  TableRow,
-  TableBody,
-  TableCell,
-  TableHeader,
-  Text,
-  Button
-} from 'grommet'
+import { Box, InfiniteScroll, Text, Button } from 'grommet'
 import { Service } from '../types/Service'
 import { ProductDoc } from '../types/Product'
 import { Cart } from 'grommet-icons'
@@ -50,13 +40,17 @@ function Product(props: ProductProps) {
         7->22 properties */
 
     row && (
-      <>
-        <TableCell>
+      <Box direction="row" justify="between" width="large">
+        <Box flex="grow">
           <Box direction="column" pad={{ vertical: 'small' }}>
             <Text size="large" title="brand name">
               {productMap('name', row)}
             </Text>
-            <Text size="xlarge" title="description">
+            <Text
+              size="xlarge"
+              title="description"
+              style={{ maxWidth: '550px' }}
+            >
               {productMap('description', row)}
             </Text>
             <Box direction="row" gap="small" align="center">
@@ -73,9 +67,9 @@ function Product(props: ProductProps) {
               })}
             </Box>
           </Box>
-        </TableCell>
+        </Box>
 
-        <TableCell>
+        <Box>
           <ProductPriceAndUnit
             hasUnitPrice={
               productMap('price', row) !== productMap('unit_price', row)
@@ -84,10 +78,10 @@ function Product(props: ProductProps) {
             unitPrice={productMap('unit_price', row)}
             price={productMap('price', row)}
           />
-        </TableCell>
+        </Box>
 
-        <TableCell>
-          <Box pad={{ vertical: 'small' }} direction="column">
+        <Box>
+          <Box pad="small" direction="column">
             <Button
               plain={false}
               icon={<Cart />}
@@ -99,8 +93,8 @@ function Product(props: ProductProps) {
             />
           </Box>
           <Text size="small">{onAddedMsg}</Text>
-        </TableCell>
-      </>
+        </Box>
+      </Box>
     )
   )
 }
@@ -131,37 +125,20 @@ function ProductsStore(props: ProductsStoreProps) {
 
   return (
     <Box overflow="auto" width="large" justify="center">
-      <Table style={{ tableLayout: 'auto' }}>
-        <TableHeader>
-          <TableRow>
-            <TableCell scope="col"></TableCell>
-            <TableCell scope="col"></TableCell>
-            <TableCell scope="col"></TableCell>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <InfiniteScroll
-            renderMarker={marker => (
-              <TableRow>
-                <TableCell colSpan={3}>
-                  {marker}
-                  <Loading />
-                </TableCell>
-              </TableRow>
-            )}
-            // scrollableAncestor="window"
-            items={rows}
-            // onMore={() => console.log('infinite onMore!')}
-            step={100}
-          >
-            {(row, i) => (
-              <TableRow key={i}>
-                <Product row={row} />
-              </TableRow>
-            )}
-          </InfiniteScroll>
-        </TableBody>
-      </Table>
+      <InfiniteScroll
+        renderMarker={marker => (
+          <Box>
+            {marker}
+            <Loading />
+          </Box>
+        )}
+        // scrollableAncestor="window"
+        items={rows}
+        // onMore={() => console.log('infinite onMore!')}
+        step={100}
+      >
+        {(row, i) => <Product row={row} key={`infpro${i}`} />}
+      </InfiniteScroll>
     </Box>
   )
 }

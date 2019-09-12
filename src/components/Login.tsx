@@ -56,7 +56,7 @@ function Login(props: Props) {
   }, [userService, history])
 
   return (
-    <Box fill align="center" justify="center">
+    <Box align="center" justify="center" style={{ minHeight: '100vh' }}>
       <Box width="medium">
         <Form onSubmit={doLogin}>
           <FormField

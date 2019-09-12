@@ -260,7 +260,7 @@ const CartMenu = (props: CartMenuProps & RouteComponentProps) => {
             label="Checkout"
             onClick={() => {
               props.onClickOutside()
-              props.history.push('/checkout')
+              props.history.push('/store/checkout')
             }}
             hoverIndicator
           />
