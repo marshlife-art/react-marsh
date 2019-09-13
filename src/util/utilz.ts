@@ -52,3 +52,8 @@ export const ORDER_SHIPMENT_STATUSES: ShipmentStatus[] = [
   'ready',
   'shipped'
 ]
+
+export function dateMinSec(): string {
+  const date = new Date()
+  return `${date.getMinutes()}${date.getSeconds()}`
+}

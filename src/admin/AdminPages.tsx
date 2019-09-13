@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Grid, Button, Accordion, AccordionPanel } from 'grommet'
+import { Box, Button, Heading } from 'grommet'
 
 import { Page } from '../types/Page'
 import {
@@ -9,24 +9,66 @@ import {
 } from '../services/usePageService'
 import { Add } from 'grommet-icons'
 import PageEditor from './editors/PageEditor'
-import ProductsWholesaleEditor from './editors/ProductsWholesaleEditor'
-import OrderEditor from './editors/OrderEditor'
+import { dateMinSec } from '../util/utilz'
+// import ProductsWholesaleEditor from './editors/ProductsWholesaleEditor'
+// import OrderEditor from './editors/OrderEditor'
+// import { StickyBox } from '../components/StickyBox'
 
-type KnownCollectionNames = '' | 'pages' | 'products_wholesale' | 'orders'
+function AdminPagesSidenav(props: {
+  setSelectedDocID: (value: React.SetStateAction<string | undefined>) => void
+  selectedDocID: string | undefined
+}) {
+  const { setSelectedDocID, selectedDocID } = props
+
+  const allDocs = useAllDocumentsService('pages')
+
+  return (
+    <Box gridArea="side" fill>
+      {allDocs.status === 'loaded' && (
+        <>
+          {allDocs.payload.rows.map(row => (
+            <Button
+              key={row.id}
+              color="dark-1"
+              hoverIndicator
+              onClick={() => setSelectedDocID(row.id)}
+            >
+              <Box
+                pad={{ horizontal: 'medium', vertical: 'small' }}
+                border={
+                  selectedDocID === row.id && {
+                    side: 'left',
+                    color: 'border',
+                    size: 'large'
+                  }
+                }
+              >
+                {row.id}
+              </Box>
+            </Button>
+          ))}
+          <Box pad="medium">
+            <Button
+              plain={false}
+              icon={<Add />}
+              onClick={() => setSelectedDocID(`/new_page${dateMinSec()}`)}
+            />
+          </Box>
+        </>
+      )}
+    </Box>
+  )
+}
 
 function AdminPages() {
-  const [collection, setCollection] = useState<KnownCollectionNames>('')
   const [selectedDocID, setSelectedDocID] = useState<string>()
 
-  const allDocs = useAllDocumentsService(collection)
-  const doc = useDocumentService(collection, selectedDocID)
+  const doc = useDocumentService('pages', selectedDocID)
 
   const [selectedPage, setSelectedPage] = useState<Page>()
 
   const [doSave, setDoSave] = useState(false)
   const [saveMessage, setSaveMessage] = useState('save')
-
-  const [actionModalOpen, setActionModalOpen] = useState(false)
 
   useEffect(() => {
     saveMessage !== 'save' &&
@@ -34,7 +76,7 @@ function AdminPages() {
   }, [saveMessage])
 
   const putDocResult = useDocumentPutService(
-    collection,
+    'pages',
     selectedPage,
     doSave,
     (rev: string) => {
@@ -51,126 +93,41 @@ function AdminPages() {
     doc.status === 'loaded' && setSelectedPage(doc.payload)
   }, [doc])
 
-  function newAction() {
-    switch (collection) {
-      case 'pages':
-        setSelectedDocID('/new_page')
-        break
-      case 'products_wholesale':
-        console.log('products_wholesale')
-        setActionModalOpen(true)
-        break
-      default:
-        console.log('newAction has nothing to do')
-        break
-    }
-  }
-
-  const sidePanelCollections: Array<KnownCollectionNames> = [
-    'pages',
-    'products_wholesale',
-    'orders'
-  ]
-
   return (
-    <Box gridArea="main" align="stretch" justify="start" fill>
-      <Grid
-        fill
-        areas={[
-          { name: 'side', start: [0, 0], end: [1, 0] },
-          { name: 'main', start: [1, 0], end: [1, 0] }
-        ]}
-        columns={['small', 'flex']}
-        rows={['full']}
-        gap="small"
-      >
-        <Box gridArea="side" fill>
-          <Accordion
-            onActive={(activeIndexes: number[]) => {
-              setSelectedDocID(undefined)
-              setSelectedPage(undefined)
-              setCollection(sidePanelCollections[activeIndexes[0]])
-            }}
-          >
-            {sidePanelCollections.map((collection: string, idx: number) => (
-              <AccordionPanel
-                label={
-                  <Box pad={{ left: 'medium', vertical: 'small' }}>
-                    {/products/.test(collection) ? 'products' : collection}
-                  </Box>
-                }
-                key={`sidePanel${idx}`}
-                style={{ wordBreak: 'break-all' }}
-              >
-                {allDocs.status === 'loaded' && (
-                  <>
-                    {allDocs.payload.rows.map(row => (
-                      <Button
-                        key={row.id}
-                        color="dark-1"
-                        hoverIndicator
-                        onClick={() => setSelectedDocID(row.id)}
-                      >
-                        <Box
-                          pad={{ horizontal: 'medium', vertical: 'small' }}
-                          border={
-                            selectedDocID === row.id && {
-                              side: 'left',
-                              color: 'border',
-                              size: 'large'
-                            }
-                          }
-                        >
-                          {row.id}
-                        </Box>
-                      </Button>
-                    ))}
-                    <Box pad="medium">
-                      <Button
-                        plain={false}
-                        icon={<Add />}
-                        onClick={() => newAction()}
-                      />
-                    </Box>
-                  </>
-                )}
-              </AccordionPanel>
-            ))}
-          </Accordion>
+    <>
+      <AdminPagesSidenav
+        {...{
+          setSelectedDocID,
+          selectedDocID
+        }}
+      />
 
-          {/* <Box pad={{ left: 'medium' }}>
-            <Select
-              options={['pages', 'products_wholesale']}
-              placeholder="Collections"
-              value={collection}
-              onChange={({ option }) => {
-                setSelectedDocID(undefined)
-                setSelectedPage(undefined)
-                setCollection(option)
-              }}
-            />
-          </Box> */}
-        </Box>
-
-        <Box gridArea="main" fill>
-          {collection === 'pages' && selectedPage && (
-            <PageEditor
-              setSelectedPage={setSelectedPage}
-              selectedPage={selectedPage}
-              putDocResult={putDocResult}
-              saveMessage={saveMessage}
-              setDoSave={setDoSave}
-            />
-          )}
-          {collection === 'products_wholesale' && (
-            <ProductsWholesaleEditor
-              {...{ actionModalOpen, setActionModalOpen, selectedDocID }}
-            />
-          )}
-          {collection === 'orders' && <OrderEditor doc={doc} />}
-        </Box>
-      </Grid>
-    </Box>
+      <Box gridArea="main" pad={{ top: 'small' }} fill>
+        {selectedPage && (
+          <PageEditor
+            setSelectedPage={setSelectedPage}
+            selectedPage={selectedPage}
+            putDocResult={putDocResult}
+            saveMessage={saveMessage}
+            setDoSave={setDoSave}
+          />
+        )}
+        {!selectedPage && (
+          <Box justify="center" align="center" fill>
+            <Heading level={2}>select a page to edit</Heading>
+            or
+            <Heading level={2}>
+              <Button
+                plain={false}
+                label="create a new page"
+                icon={<Add />}
+                onClick={() => setSelectedDocID(`/new_page${dateMinSec()}`)}
+              />
+            </Heading>
+          </Box>
+        )}
+      </Box>
+    </>
   )
 }
 

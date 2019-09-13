@@ -165,3 +165,20 @@ export class SearchInput extends Component<{}, SearchInputState> {
     )
   }
 }
+
+/* 
+import { Close, Search } from 'grommet-icons'
+
+
+  const [showSearch, setShowSearch] = useState(false)
+
+{showSearch && <SearchInput />}
+          <Button
+            onClick={() => setShowSearch(!showSearch)}
+            icon={showSearch ? <Close /> : <Search />}
+            active={showSearch}
+            hoverIndicator
+          />
+
+
+          */

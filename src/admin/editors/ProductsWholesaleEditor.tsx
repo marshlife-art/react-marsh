@@ -135,7 +135,7 @@ function ProductsWholesaleEditor(props: ProductsWholesaleEditorProps) {
   }
 
   return (
-    <Box pad={{ horizontal: 'medium', bottom: 'small' }} fill>
+    <Box fill>
       {props.actionModalOpen && (
         <Layer
           margin={{ top: 'large' }}
