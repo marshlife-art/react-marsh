@@ -3,10 +3,7 @@ import { Box, Heading, Text, Button, TextInput } from 'grommet'
 import Papa from 'papaparse'
 import styled from 'styled-components'
 
-import {
-  useProductsPutService,
-  deleteAllDocs
-} from '../../services/useProductServices'
+import { useProductsPutService } from '../../services/useProductServices'
 import {
   ProductDoc,
   ProductMap,
@@ -68,14 +65,14 @@ function ProductsWholesaleImport() {
       setSavedDocsCount(prevCount =>
         prevCount < docsToSaveCount ? prevCount + 1 : prevCount
       )
-      console.log(
-        'saved one: rev:',
-        rev,
-        ' savedDocsCount:',
-        savedDocsCount,
-        ' docsToSaveCount:',
-        docsToSaveCount
-      )
+      // console.log(
+      //   'saved one: rev:',
+      //   rev,
+      //   ' savedDocsCount:',
+      //   savedDocsCount,
+      //   ' docsToSaveCount:',
+      //   docsToSaveCount
+      // )
       saveNextDoc(docsToSaveCount)
     },
     true
@@ -106,25 +103,25 @@ function ProductsWholesaleImport() {
   let groupName: string
 
   function getRandomProduct(): void {
-    console.log('getRandomProduct allData:', allData)
+    // console.log('getRandomProduct allData:', allData)
     const keyz = Object.keys(allData.data)
     const keyzlen = keyz.length - 1
     const randCat = keyz[Math.floor(Math.random() * keyzlen)]
-    console.log('[getRandomProduct]', keyz, keyzlen)
+    // console.log('[getRandomProduct]', keyz, keyzlen)
     try {
       const randIdx = Math.floor(
         Math.random() * allData.data[randCat].length - 1
       )
 
       const rProd = allData.data[randCat][randIdx]
-      console.log(
-        'randCat:',
-        randCat,
-        ' randIdx:',
-        randIdx,
-        ' rprrProdod:',
-        rProd
-      )
+      // console.log(
+      //   'randCat:',
+      //   randCat,
+      //   ' randIdx:',
+      //   randIdx,
+      //   ' rprrProdod:',
+      //   rProd
+      // )
       setRandomProduct(rProd)
     } catch (e) {
       console.warn('onoz! getRandomProduct caught error: ', e)
@@ -178,7 +175,7 @@ function ProductsWholesaleImport() {
         }
       },
       complete: function() {
-        console.log('parsing done! mutAllData:', mutAllData)
+        // console.log('parsing done! mutAllData:', mutAllData)
         setAllData(mutAllData)
         setLoading(false)
         setStep('map')
@@ -204,8 +201,8 @@ function ProductsWholesaleImport() {
   function onSaveMapping() {
     const canGotoNextStep =
       productMap && Object.keys(productMap).length === PRODUCT_KEYS.length
-    console.log('next productMap:', productMap)
-    console.log('PRODUCT_KEYS === keys(productMap):', canGotoNextStep)
+    // console.log('next productMap:', productMap)
+    // console.log('PRODUCT_KEYS === keys(productMap):', canGotoNextStep)
     setProductMapErrorMsg(
       canGotoNextStep ? '' : 'PLEASE SELECT AN OPTION FOR EACH PRODUCT KEY'
     )
@@ -219,7 +216,7 @@ function ProductsWholesaleImport() {
         // #TODO: default index [10] probably not needed
         const catIdx =
           (productMap['category'] && productMap['category'][0]) || 10
-        console.log('catz:', catz(catIdx, allData.data[group_name]))
+        // console.log('catz:', catz(catIdx, allData.data[group_name]))
         mutAllDataMeta[group_name] = {
           data_length: allData.data[group_name].length,
           catz: catz(catIdx, allData.data[group_name]),
@@ -227,7 +224,7 @@ function ProductsWholesaleImport() {
           header: allData.header
         }
       })
-      console.log('parsing done! mutAllData:', mutAllDataMeta)
+      // console.log('parsing done! mutAllData:', mutAllDataMeta)
       setAllData(prevAllData => ({ ...prevAllData, meta: mutAllDataMeta }))
     }
   }
@@ -235,41 +232,13 @@ function ProductsWholesaleImport() {
   function onImportProducts() {
     setImportProducsError(undefined)
     setStep('done')
-
     setDocsToSaveCount(Object.keys(allData.data).length)
-
-    // Object.keys(allData.data).forEach(cat => {
-    //   console.log('gonna save doc._id:', cat)
-    //   setProductDoc({
-    //     _id: cat,
-    //     data: allData.data[cat],
-    //     meta: allData.meta[cat],
-    //     product_map: productMap as ProductMap
-    //   })
-    //   setDoSave(true)
-    // })
     saveNextDoc(Object.keys(allData.data).length)
-
-    // deleteAllDocs('products_wholesale')
-    //   .then(() => {
-
-    //   })
-    //   .catch(err => {
-    //     console.warn('useProductsPutService truncateAllDocs caught error:', err)
-    //     setImportProducsError(err)
-    //   })
   }
 
   function saveNextDoc(_docsToSaveCount: number) {
-    console.log(
-      'saveNextDoc() savedDocsCount:',
-      savedDocsCount,
-      ' docsToSaveCount:',
-      _docsToSaveCount
-    )
     if (savedDocsCount < _docsToSaveCount) {
       const cat = Object.keys(allData.data)[savedDocsCount]
-      console.log('have more docz to save... cat:', cat)
       if (cat) {
         setProductDoc({
           _id: cat,

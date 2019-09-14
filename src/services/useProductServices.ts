@@ -54,7 +54,7 @@ const useProductsPutService = (
           updateRev(doc._rev)
         }
       })
-  }, [collection, doc, doSave, updateRev])
+  }, [collection, doc, doSave, updateRev, force])
 
   return result
 }
