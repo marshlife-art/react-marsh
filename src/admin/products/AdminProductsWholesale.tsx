@@ -46,11 +46,11 @@ function AdminProductsWholesale() {
     <>
       <Box
         fill
-        justify="start"
+        justify="center"
         align="center"
         direction="column"
         gap="small"
-        pad={{ vertical: 'small' }}
+        pad={{ vertical: 'large' }}
       >
         {allDocs.status !== 'loaded' && <Loading />}
 
