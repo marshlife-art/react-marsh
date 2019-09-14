@@ -8,6 +8,7 @@ import { useProductDocService } from '../services/useProductServices'
 import { ProductsStore } from '../components/ProductsStore'
 import styled from 'styled-components'
 import Loading from '../components/Loading'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 // import { StickyBox } from '../components/StickyBox'
 // import { useCartPutService } from '../services/useCartService';
 
@@ -34,7 +35,21 @@ const CatCrumb = styled(Text)`
   text-overflow: ellipsis;
 `
 
-function ProductsWholesale() {
+function ProductsWholesale(props: RouteComponentProps) {
+  // const [q, setQ] = useState(props.location.search.replace('?', ''))
+  // useEffect(() => {
+  //   const unListen = props.history.listen((location, action) => {
+  //     console.log(
+  //       '[StoreSearch] history listener! location, action:',
+  //       location,
+  //       action
+  //     )
+  //     setQ(location.search.replace('?', ''))
+  //   })
+
+  //   return () => unListen && unListen()
+  // }, [props.history])
+
   const allDocs = useAllDocumentsService('products_wholesale', false)
 
   const [selectedDoc, setSelectedDoc] = useState()
@@ -165,4 +180,4 @@ function ProductsWholesale() {
   )
 }
 
-export { ProductsWholesale }
+export default withRouter(ProductsWholesale)
