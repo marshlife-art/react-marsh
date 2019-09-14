@@ -18,11 +18,12 @@ interface ProductMapSelectProps {
   optz: ProductSelectOption[]
   pkey: keyof ProductMap
   setProductMapForKey: (key: keyof ProductMap, value: number[]) => void
+  productMap?: Partial<ProductMap>
 }
 
 interface ProductMapSelectState {
   options: ProductSelectOption[]
-  value: string
+  value: ProductSelectOption[]
   selected: number[]
 }
 
@@ -34,9 +35,25 @@ export class ProductMapSelect extends Component<
     optz: PRODUCT_KEYS_FOR_SELECT
   }
 
+  defaultValues = (): ProductSelectOption[] => {
+    const { productMap, pkey } = this.props
+    const values = productMap && productMap[pkey]
+    if (values) {
+      return values.map(
+        item =>
+          ({
+            lab: `${item}`,
+            val: `${item}`,
+            dis: false
+          } as ProductSelectOption)
+      )
+    } else {
+      return []
+    }
+  }
   state: ProductMapSelectState = {
     options: this.props.optz, // :/
-    value: '',
+    value: this.defaultValues(),
     selected: []
   }
 

@@ -3,7 +3,7 @@ import PouchDB from 'pouchdb'
 
 import { Service } from '../types/Service'
 import { CartDoc, LineItem } from '../types/Cart'
-import { productMap } from '../util/utilz'
+import { productMapFn } from '../util/utilz'
 
 // const DB_URL = 'http://localhost:5984/'
 
@@ -164,11 +164,11 @@ const addToCart = (row: string[]) => {
       cartDoc.line_items = cartDoc.line_items || []
       cartDoc.line_items.push({
         unit_type:
-          productMap('price', row) === productMap('unit_price', row)
+          productMapFn('price', row) === productMapFn('unit_price', row)
             ? 'EA'
             : 'CS',
         quantity: 1,
-        price: parseFloat(productMap('price', row).replace('$', '')),
+        price: parseFloat(productMapFn('price', row).replace('$', '')),
         data: row
       })
       db.put(cartDoc)

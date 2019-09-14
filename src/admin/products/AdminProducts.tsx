@@ -3,19 +3,35 @@ import { Switch, Route } from 'react-router'
 
 import { Box } from 'grommet'
 
-import { SidebarButton } from '../../components/SidebarButton'
+import SidebarButton from '../../components/SidebarButton'
 import { AdminProductsLocal } from './AdminProductsLocal'
 import { AdminProductsWholesale } from './AdminProductsWholesale'
+import { ProductsWholesaleImport } from './ProductsWholesaleImport'
 
 function AdminProducts() {
   return (
     <>
       <Box gridArea="side">
-        <SidebarButton label="local" to="/admin/products/local" />
-        <SidebarButton label="wholesale" to="/admin/products/wholesale" />
+        <SidebarButton label="local" to="/admin/products/local" useActive />
+        <SidebarButton
+          label="wholesale"
+          to="/admin/products/wholesale"
+          useActive
+        />
+        <SidebarButton
+          label="import"
+          to="/admin/products/wholesale/import"
+          useActive
+        />
       </Box>
 
-      <Box gridArea="main" fill justify="center" align="center">
+      <Box
+        fill
+        gridArea="main"
+        justify="center"
+        align="center"
+        overflow="scroll"
+      >
         <Switch>
           <Route
             exact
@@ -26,6 +42,11 @@ function AdminProducts() {
             exact
             path="/admin/products/wholesale"
             component={AdminProductsWholesale}
+          />
+          <Route
+            exact
+            path="/admin/products/wholesale/import"
+            component={ProductsWholesaleImport}
           />
         </Switch>
       </Box>

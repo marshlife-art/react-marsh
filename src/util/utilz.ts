@@ -1,4 +1,9 @@
-import { ProductMapFn, ProductPropMapFn, ProductMap } from '../types/Product'
+import {
+  ProductMapFn,
+  ProductPropMapFn,
+  ProductMap,
+  ProductMeta
+} from '../types/Product'
 import { PaymentStatus, ShipmentStatus } from '../types/Order'
 
 // #TODO: dynamically get this from relevant PouchDB data
@@ -28,13 +33,22 @@ export const PRODUCT_KEYS: Array<keyof ProductMap> = [
   'search'
 ]
 
-export const productPropMapFn: ProductPropMapFn = (row: string[]): string[] =>
-  PRODUCT_MAP['property'].map((idx: number) => row[idx])
+export const productPropMapFn: ProductPropMapFn = (
+  row: string[],
+  productMap?: ProductMap
+): string[] => {
+  productMap = productMap || PRODUCT_MAP
+  return productMap['property'].map((idx: number) => row[idx])
+}
 
-export const productMap: ProductMapFn = (
+export const productMapFn: ProductMapFn = (
   key: keyof ProductMap,
-  row: string[]
-): string => PRODUCT_MAP[key].map((idx: number) => row[idx]).join(' ')
+  row: string[],
+  productMap?: ProductMap
+): string => {
+  productMap = productMap || PRODUCT_MAP
+  return productMap[key].map((idx: number) => row[idx]).join(' ')
+}
 
 export const ORDER_PAYMENT_STATUSES: PaymentStatus[] = [
   'balance_due',
@@ -56,4 +70,29 @@ export const ORDER_SHIPMENT_STATUSES: ShipmentStatus[] = [
 export function dateMinSec(): string {
   const date = new Date()
   return `${date.getMinutes()}${date.getSeconds()}`
+}
+
+export function catz(catIdx: number, data?: string[][]): ProductMeta['catz'] {
+  if (data) {
+    // try{
+    // }catch(e){
+    //   console.warn('meOW! catz caught error:',e)
+    // }
+    const ret = data
+      .map((p: string[]) => productMapFn('category', p))
+      .filter(
+        (cat: string, index: number, arr: string[]) =>
+          arr.indexOf(cat) === index && cat !== ''
+      )
+      .map(name => ({
+        name: name,
+        count: data.filter(p => p[catIdx] === name).length
+      }))
+
+    console.log('catz!! data:', data, ' will ret:', ret)
+
+    return ret
+  } else {
+    return []
+  }
 }

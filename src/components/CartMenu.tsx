@@ -15,7 +15,7 @@ import { FormClose, Trash } from 'grommet-icons'
 import { ProductPriceAndUnit } from './ProductPrice'
 import { ProductProperty } from './ProductProperty'
 import { LineItem, UnitType } from '../types/Cart'
-import { productMap, productPropMapFn } from '../util/utilz'
+import { productMapFn, productPropMapFn } from '../util/utilz'
 
 // import { StyledLink } from './StyledLink'
 
@@ -142,10 +142,10 @@ const CartMenu = (props: CartMenuProps & RouteComponentProps) => {
                   >
                     <Box direction="column" pad={{ right: 'small' }}>
                       <Text size="small" title="brand name">
-                        {productMap('name', row)}
+                        {productMapFn('name', row)}
                       </Text>
                       <Text size="medium" title="description">
-                        {productMap('description', row)}
+                        {productMapFn('description', row)}
                       </Text>
                       <Box
                         direction="row"
@@ -154,7 +154,7 @@ const CartMenu = (props: CartMenuProps & RouteComponentProps) => {
                         height="24px"
                       >
                         <Text size="xsmall" title="package count">
-                          {productMap('pk', row)}ct.
+                          {productMapFn('pk', row)}ct.
                         </Text>
                         {productPropMapFn(row).map((r, i) => {
                           if (!r || /^\s*$/.test(r)) {
@@ -176,12 +176,12 @@ const CartMenu = (props: CartMenuProps & RouteComponentProps) => {
 
                       <ProductPriceAndUnit
                         hasUnitPrice={
-                          productMap('price', row) !==
-                          productMap('unit_price', row)
+                          productMapFn('price', row) !==
+                          productMapFn('unit_price', row)
                         }
-                        size={productMap('size', row)}
-                        unitPrice={productMap('unit_price', row)}
-                        price={productMap('price', row)}
+                        size={productMapFn('size', row)}
+                        unitPrice={productMapFn('unit_price', row)}
+                        price={productMapFn('price', row)}
                       />
                       <Button
                         icon={<Trash color="status-critical" />}

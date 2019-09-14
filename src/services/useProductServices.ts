@@ -10,7 +10,7 @@ const useProductsPutService = (
   collection: string,
   doc: ProductDoc | undefined,
   doSave: boolean,
-  updateRev: (rev: string) => void
+  updateRev: (rev?: string) => void
 ) => {
   const [result, setResult] = useState<Service<PouchDB.Core.Response>>({
     status: 'loading'
@@ -20,14 +20,19 @@ const useProductsPutService = (
     if (!doSave || !doc) {
       return
     }
-    const db = new PouchDB(DB_URL + collection) // local #TODO: add remote sync
-    console.log('useProductsPutService gonna save doc:', doc)
+    const db = new PouchDB(DB_URL + collection)
+    console.log('[useProductsPutService] gonna save doc:', doc)
+
     db.put(doc)
       .then(response => {
         setResult({ status: 'saved', payload: response })
         updateRev(response.rev)
       })
-      .catch(error => setResult({ ...error }))
+      .catch(error => {
+        console.log('[useProductsPutService] zomg error', error)
+        setResult({ status: 'error', error: error.reason })
+        updateRev(doc._rev)
+      })
   }, [collection, doc, doSave, updateRev])
 
   return result
@@ -59,4 +64,15 @@ const useProductDocService = (collection: string, id: string | undefined) => {
   return result
 }
 
-export { useProductsPutService, useProductDocService }
+const deleteAllDocs = (collection: string) => {
+  const db = new PouchDB(DB_URL + collection)
+  console.log(
+    '[useProductsPutService] gonna PURGE all docs for db:',
+    collection
+  )
+  return db
+    .allDocs()
+    .then(docs => docs.rows.map(doc => db.remove(doc.id, doc.value.rev)))
+}
+
+export { useProductsPutService, useProductDocService, deleteAllDocs }
