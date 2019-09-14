@@ -85,15 +85,28 @@ const useProductDocService = (collection: string, id: string | undefined) => {
   return result
 }
 
-const deleteAllDocs = (collection: string) => {
+// const deleteAllDocs = (collection: string) => {
+//   const db = new PouchDB(DB_URL + collection)
+//   console.log(
+//     '[useProductsPutService] gonna PURGE all docs for db:',
+//     collection
+//   )
+//   return db
+//     .allDocs()
+//     .then(docs => docs.rows.map(doc => db.remove(doc.id, doc.value.rev)))
+// }
+
+const deleteDoc = (collection: string, id: string) => {
   const db = new PouchDB(DB_URL + collection)
-  console.log(
-    '[useProductsPutService] gonna PURGE all docs for db:',
-    collection
-  )
+  console.log('[useProductsPutService] gonna DELETE:', collection, id)
   return db
-    .allDocs()
-    .then(docs => docs.rows.map(doc => db.remove(doc.id, doc.value.rev)))
+    .get(id)
+    .then(function(doc) {
+      return db.remove(doc)
+    })
+    .catch(function(err) {
+      console.warn('[useProductsPutService] deleteDoc caught error:', err)
+    })
 }
 
-export { useProductsPutService, useProductDocService, deleteAllDocs }
+export { useProductsPutService, useProductDocService, deleteDoc }

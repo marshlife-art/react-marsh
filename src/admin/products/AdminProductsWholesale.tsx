@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Accordion, AccordionPanel, Text } from 'grommet'
+import { Box, Accordion, AccordionPanel, Text, Button } from 'grommet'
 
 import { useAllDocumentsService } from '../../services/usePageService'
 import Loading from '../../components/Loading'
 import { ProductMeta, ProductDoc } from '../../types/Product'
+import { Trash } from 'grommet-icons'
+import { deleteDoc } from '../../services/useProductServices'
 // import { catz } from '../../util/utilz'
 
 type AllDocsResponse = PouchDB.Core.AllDocsResponse<any>['rows']
@@ -43,6 +45,17 @@ function AdminProductsWholesale() {
   //     return []
   //   }
   // }
+
+  function tryGetDate(doc: ProductDoc): string {
+    try {
+      return doc && doc.meta
+        ? new Date(doc.meta.date_added).toLocaleDateString()
+        : ''
+    } catch (e) {
+      console.warn('tryGetTime caught error:', e)
+      return ''
+    }
+  }
 
   return (
     <>
@@ -89,7 +102,10 @@ function AdminProductsWholesale() {
                         pad={{ vertical: 'small' }}
                         fill
                       >
-                        <Text>{row.id}</Text> <Text>({catz.length})</Text>
+                        <Text>{row.id}</Text>
+                        <Text>
+                          <b>{catz.length}</b>
+                        </Text>
                       </Box>
                     )
                   }
@@ -103,13 +119,38 @@ function AdminProductsWholesale() {
                         key={`itemforcat${cat.name}`}
                         fill
                       >
-                        <Text>{cat.name}</Text>
-                        <Text>({cat.count})</Text>
+                        <Text margin={{ right: 'small' }}>{cat.name}</Text>
+                        <Text>
+                          <b>{cat.count}</b>
+                        </Text>
                       </Box>
                     ))}
-                    <Box pad={{ top: 'small' }}>
+                    <Box
+                      pad={{ top: 'small' }}
+                      justify="between"
+                      direction="row"
+                      align="center"
+                    >
+                      <Button
+                        icon={<Trash color="status-error" />}
+                        color="status-error"
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `are you sure you want to delete ${row.id}?`
+                            )
+                          ) {
+                            deleteDoc('products_wholesale', row.id)
+                          }
+                        }}
+                        title="delete"
+                        hoverIndicator
+                      />
+                      <Text size="small">
+                        <i>added on: {tryGetDate(row.doc)}</i>
+                      </Text>
                       <Text textAlign="end">
-                        <b>Total:</b> {meta.data_length}
+                        Total: <b>{meta.data_length}</b>
                       </Text>
                     </Box>
                   </Box>

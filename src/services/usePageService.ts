@@ -51,6 +51,28 @@ const useAllDocumentsService = (
     db.allDocs({ include_docs: include_docs })
       .then(docs => setResult({ status: 'loaded', payload: docs }))
       .catch(error => setResult({ ...error }))
+
+    const changes = db
+      .changes({
+        since: 'now',
+        live: true,
+        include_docs: include_docs
+      })
+      .on('change', change => {
+        if (change.deleted) {
+          db.allDocs({ include_docs: include_docs })
+            .then(docs => setResult({ status: 'loaded', payload: docs }))
+            .catch(error => setResult({ ...error }))
+        }
+      })
+      .on('complete', info => {
+        // changes() was canceled
+      })
+      .on('error', err => {
+        console.warn('useCartDocService caught error:', err)
+      })
+
+    return () => changes.cancel()
   }, [collection, include_docs])
 
   return result
