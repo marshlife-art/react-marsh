@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route } from 'react-router'
+import { Switch, Route, Redirect } from 'react-router'
 
 import { Box } from 'grommet'
 
@@ -12,7 +12,7 @@ function AdminProducts() {
   return (
     <>
       <Box gridArea="side">
-        <SidebarButton label="local" to="/admin/products/local" useActive />
+        {/* <SidebarButton label="local" to="/admin/products/local" useActive /> */}
         <SidebarButton
           label="wholesale"
           to="/admin/products/wholesale"
@@ -48,6 +48,7 @@ function AdminProducts() {
             path="/admin/products/wholesale/import"
             component={ProductsWholesaleImport}
           />
+          <Redirect from="/admin/products" to="/admin/products/wholesale" />
         </Switch>
       </Box>
     </>

@@ -73,26 +73,23 @@ export function dateMinSec(): string {
 }
 
 export function catz(catIdx: number, data?: string[][]): ProductMeta['catz'] {
-  if (data) {
-    // try{
-    // }catch(e){
-    //   console.warn('meOW! catz caught error:',e)
-    // }
-    const ret = data
-      .map((p: string[]) => productMapFn('category', p))
-      .filter(
-        (cat: string, index: number, arr: string[]) =>
-          arr.indexOf(cat) === index && cat !== ''
-      )
-      .map(name => ({
-        name: name,
-        count: data.filter(p => p[catIdx] === name).length
-      }))
-
-    console.log('catz!! data:', data, ' will ret:', ret)
-
+  let ret: ProductMeta['catz'] = []
+  try {
+    if (data) {
+      ret = data
+        .map((p: string[]) => productMapFn('category', p))
+        .filter(
+          (cat: string, index: number, arr: string[]) =>
+            arr.indexOf(cat) === index && cat !== ''
+        )
+        .map(name => ({
+          name: name,
+          count: data.filter(p => p[catIdx] === name).length
+        }))
+    }
+  } catch (e) {
+    console.warn('meOW! catz caught error:', e)
+  } finally {
     return ret
-  } else {
-    return []
   }
 }
