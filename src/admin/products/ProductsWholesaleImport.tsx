@@ -65,7 +65,9 @@ function ProductsWholesaleImport() {
     productDoc,
     doSave,
     (rev?: string) => {
-      setSavedDocsCount(prevCount => prevCount + 1)
+      setSavedDocsCount(prevCount =>
+        prevCount < docsToSaveCount ? prevCount + 1 : prevCount
+      )
       console.log(
         'saved one: rev:',
         rev,
@@ -74,7 +76,9 @@ function ProductsWholesaleImport() {
         ' docsToSaveCount:',
         docsToSaveCount
       )
-    }
+      saveNextDoc(docsToSaveCount)
+    },
+    true
   )
 
   const [randomProduct, setRandomProduct] = useState<string[]>()
@@ -150,27 +154,27 @@ function ProductsWholesaleImport() {
       worker: true,
       step: ({ data }) => {
         if (mutAllData.header.length === 0) {
-          mutAllData.header = data
+          mutAllData.header = data.map(d => d.trim())
           // setProductDoc({ _id: 'header', data: data })
           // setDoSave(true)
           setHeader(data)
         } else if (
           data[0] &&
           data[0] !== '' &&
-          data.slice(1, data.length).filter(x => x !== '').length === 0
+          data.slice(1, data.length).filter(x => x.trim() !== '').length === 0
         ) {
           if (!groupName) {
-            groupName = data[0]
+            groupName = data[0].trim()
           } else {
-            mutAllData.data[groupName].push(data)
+            mutAllData.data[groupName].push(data.map(d => d.trim()))
           }
-          groupName = data[0]
+          groupName = data[0].trim()
         } else {
           groupName = groupName || 'default'
           if (!mutAllData.data[groupName]) {
             mutAllData.data[groupName] = []
           }
-          mutAllData.data[groupName].push(data)
+          mutAllData.data[groupName].push(data.map(d => d.trim()))
         }
       },
       complete: function() {
@@ -212,9 +216,7 @@ function ProductsWholesaleImport() {
       let mutAllDataMeta: AllData['meta'] = allData.meta
 
       Object.keys(allData.data).forEach(group_name => {
-        // setProductDoc({ _id: group_name, data: allData.data[group_name] })
-        // setDoSave(true)
-
+        // #TODO: default index [10] probably not needed
         const catIdx =
           (productMap['category'] && productMap['category'][0]) || 10
         console.log('catz:', catz(catIdx, allData.data[group_name]))
@@ -234,24 +236,50 @@ function ProductsWholesaleImport() {
     setImportProducsError(undefined)
     setStep('done')
 
-    deleteAllDocs('products_wholesale')
-      .then(() => {
-        setDocsToSaveCount(Object.keys(allData.data).length)
+    setDocsToSaveCount(Object.keys(allData.data).length)
 
-        Object.keys(allData.data).forEach(cat => {
-          setProductDoc({
-            _id: cat,
-            data: allData.data[cat],
-            meta: allData.meta[cat],
-            product_map: productMap as ProductMap
-          })
-          setDoSave(true)
+    // Object.keys(allData.data).forEach(cat => {
+    //   console.log('gonna save doc._id:', cat)
+    //   setProductDoc({
+    //     _id: cat,
+    //     data: allData.data[cat],
+    //     meta: allData.meta[cat],
+    //     product_map: productMap as ProductMap
+    //   })
+    //   setDoSave(true)
+    // })
+    saveNextDoc(Object.keys(allData.data).length)
+
+    // deleteAllDocs('products_wholesale')
+    //   .then(() => {
+
+    //   })
+    //   .catch(err => {
+    //     console.warn('useProductsPutService truncateAllDocs caught error:', err)
+    //     setImportProducsError(err)
+    //   })
+  }
+
+  function saveNextDoc(_docsToSaveCount: number) {
+    console.log(
+      'saveNextDoc() savedDocsCount:',
+      savedDocsCount,
+      ' docsToSaveCount:',
+      _docsToSaveCount
+    )
+    if (savedDocsCount < _docsToSaveCount) {
+      const cat = Object.keys(allData.data)[savedDocsCount]
+      console.log('have more docz to save... cat:', cat)
+      if (cat) {
+        setProductDoc({
+          _id: cat,
+          data: allData.data[cat],
+          meta: allData.meta[cat],
+          product_map: productMap as ProductMap
         })
-      })
-      .catch(err => {
-        console.warn('useProductsPutService truncateAllDocs caught error:', err)
-        setImportProducsError(err)
-      })
+        setDoSave(true)
+      }
+    }
   }
 
   return (

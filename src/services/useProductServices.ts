@@ -10,7 +10,8 @@ const useProductsPutService = (
   collection: string,
   doc: ProductDoc | undefined,
   doSave: boolean,
-  updateRev: (rev?: string) => void
+  updateRev: (rev?: string) => void,
+  force: boolean
 ) => {
   const [result, setResult] = useState<Service<PouchDB.Core.Response>>({
     status: 'loading'
@@ -25,13 +26,33 @@ const useProductsPutService = (
 
     db.put(doc)
       .then(response => {
+        console.log('okay saved it!')
         setResult({ status: 'saved', payload: response })
         updateRev(response.rev)
       })
       .catch(error => {
-        console.log('[useProductsPutService] zomg error', error)
-        setResult({ status: 'error', error: error.reason })
-        updateRev(doc._rev)
+        if (force) {
+          console.log('CAUGHT ERR BUT WILL USE FORCE')
+          db.get(doc._id)
+            .then(response => {
+              console.log('ok, updated now re-saving...')
+              doc._rev = response._rev
+              db.put(doc).then(response => {
+                console.log('w00t, puttttttttit')
+                setResult({ status: 'saved', payload: response })
+                updateRev(response.rev)
+              })
+            })
+            .catch(err => {
+              console.log('[useProductsPutService] zomg error', error)
+              setResult({ status: 'error', error: error.reason })
+              updateRev(doc._rev)
+            })
+        } else {
+          console.log('[useProductsPutService] zomg error', error)
+          setResult({ status: 'error', error: error.reason })
+          updateRev(doc._rev)
+        }
       })
   }, [collection, doc, doSave, updateRev])
 
