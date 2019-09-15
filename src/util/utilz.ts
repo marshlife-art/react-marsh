@@ -93,3 +93,12 @@ export function catz(catIdx: number, data?: string[][]): ProductMeta['catz'] {
     return ret
   }
 }
+
+export function tryGetDateTime(id: string) {
+  try {
+    return new Date(parseInt(id)).toLocaleString()
+  } catch (e) {
+    console.warn('tryGetDateTime caught error:', e)
+    return ''
+  }
+}

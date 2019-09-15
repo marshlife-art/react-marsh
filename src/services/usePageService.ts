@@ -35,7 +35,8 @@ type AllDocsResponse = Service<PouchDB.Core.AllDocsResponse<any>>
 
 const useAllDocumentsService = (
   collection: string,
-  include_docs: boolean = false
+  include_docs: boolean = false,
+  use_changes: boolean = false
 ) => {
   const [result, setResult] = useState<AllDocsResponse>({
     status: 'loading'
@@ -64,6 +65,11 @@ const useAllDocumentsService = (
             .then(docs => setResult({ status: 'loaded', payload: docs }))
             .catch(error => setResult({ ...error }))
         }
+        if (use_changes) {
+          db.allDocs({ include_docs: include_docs })
+            .then(docs => setResult({ status: 'loaded', payload: docs }))
+            .catch(error => setResult({ ...error }))
+        }
       })
       .on('complete', info => {
         // changes() was canceled
@@ -73,7 +79,7 @@ const useAllDocumentsService = (
       })
 
     return () => changes.cancel()
-  }, [collection, include_docs])
+  }, [collection, include_docs, use_changes])
 
   return result
 }

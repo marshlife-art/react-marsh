@@ -6,6 +6,7 @@ import CheckoutInformationForm from '../components/CheckoutInformationForm'
 import { useCartDocService } from '../services/useCartService'
 import { useOrderService } from '../services/useOrderService'
 import { PartialOrderDoc } from '../types/Order'
+import Loading from '../components/Loading'
 
 // this is kindof ugly :/
 const StyledTabs = styled(Tabs)`
@@ -19,6 +20,8 @@ function Checkout() {
 
   const [order, setOrder] = useState<PartialOrderDoc>()
   const [doSave, setDoSave] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [submitFailText, setSubmitFailText] = useState('')
   const [complete, setComplete] = useState(false)
   const orderDoc = useOrderService(order, doSave, (rev: string) => {
     console.log('update rev:', rev)
@@ -51,8 +54,33 @@ function Checkout() {
 
   function submitOrder() {
     console.log('submit order! order:', order)
+    setLoading(true)
+    // setDoSave(true)
 
-    setDoSave(true)
+    // setSubmitFailText
+    const url = 'http://localhost:8090/order'
+    setSubmitFailText('')
+    fetch(url, {
+      method: 'POST', // or 'PUT'
+      body: JSON.stringify({ order: order }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(response => {
+        console.log('Success:', JSON.stringify(response))
+        if (response['ok']) {
+          setComplete(true)
+        } else {
+          setSubmitFailText('onoz! not ok...')
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error)
+        setSubmitFailText('onoz!')
+      })
+      .finally(() => setLoading(false))
   }
 
   return (
@@ -119,7 +147,7 @@ function Checkout() {
 
                     <Button
                       label="Submit Order"
-                      disabled={doSave}
+                      disabled={loading}
                       onClick={() => submitOrder()}
                       primary
                       hoverIndicator
@@ -127,7 +155,10 @@ function Checkout() {
                   </Box>
                 </>
               )}
-
+              {loading && <Loading />}
+              {submitFailText && (
+                <Text color="status-critical">{submitFailText}</Text>
+              )}
               {complete && (
                 <Box align="center">
                   <Heading level={1}>

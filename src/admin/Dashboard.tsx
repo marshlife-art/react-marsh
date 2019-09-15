@@ -13,7 +13,7 @@ function Dashboard() {
       </Box>
 
       <Box gridArea="main" fill justify="center" align="center">
-        D A S H B O A R D
+        M A R S H
       </Box>
     </>
   )

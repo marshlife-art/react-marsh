@@ -13,10 +13,12 @@ export type ShipmentStatus =
   | 'pending'
   | 'ready'
   | 'shipped'
+export type OrderStatus = 'new' | 'needs_review' | 'void' | 'archived'
 
 export interface OrderDoc {
   _id: string
   _rev?: string
+  status: OrderStatus
   payment_status: PaymentStatus
   shipment_status: ShipmentStatus
   line_items: LineItem[]

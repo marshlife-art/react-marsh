@@ -20,20 +20,33 @@ interface CheckoutInformationFromProps {
 }
 
 function CheckoutInformationForm(props: CheckoutInformationFromProps) {
-  const [name, setName] = useState<string>()
-  const [email, setEmail] = useState<string>()
-  const [phone, setPhone] = useState<string>('')
-  const [address, setAddress] = useState<string>()
-  const [notes, setNotes] = useState<string>()
+  const [name, setName] = useState<string | undefined>('test testing')
+  const [email, setEmail] = useState<string | undefined>('zomg@example.com')
+  const [phone, setPhone] = useState<string>('6669996969')
+  const [address, setAddress] = useState<string | undefined>(
+    '666 devel dr.\nny,ny\n66666'
+  )
+  const [notes, setNotes] = useState<string | undefined>(
+    encodeURIComponent(`
+   {\__/} 
+  ( • . •)      
+  / >💻 		yea, I can build that for u. 
+  
+  
+   {\__/}   
+  ( • - •)     
+   💻< \  	wait, wutz the deadline?
+`)
+  )
 
   const { order } = props
   useEffect(() => {
     if (order) {
-      setName(order.name)
-      setEmail(order.email)
-      order.phone && setPhone(order.phone)
-      setAddress(order.address)
-      setNotes(order.notes)
+      order.name && setName(order.name)
+      order.email && setEmail(order.email)
+      order.phone && order.phone && setPhone(order.phone)
+      order.address && setAddress(order.address)
+      order.notes && setNotes(encodeURIComponent(order.notes))
     }
   }, [order])
 
@@ -111,7 +124,7 @@ function CheckoutInformationForm(props: CheckoutInformationFromProps) {
         name="notes"
         component={TextArea}
         value={notes}
-        onChange={e => setNotes(e.target.value)}
+        onChange={e => setNotes(encodeURIComponent(e.target.value))}
       />
       {/* <FormField
     name="subscribe"
