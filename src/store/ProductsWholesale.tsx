@@ -9,6 +9,7 @@ import { ProductsStore } from '../components/ProductsStore'
 import styled from 'styled-components'
 import Loading from '../components/Loading'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { productMapFn } from '../util/utilz'
 // import { StickyBox } from '../components/StickyBox'
 // import { useCartPutService } from '../services/useCartService';
 
@@ -71,9 +72,12 @@ function ProductsWholesale(props: RouteComponentProps) {
     ) {
       return
     }
+
     setCategories(
       productDocResult.payload.data
-        .map(p => p[10])
+        .map(p =>
+          productMapFn('category', p, productDocResult.payload.product_map)
+        )
         .filter((cat, index, arr) => arr.indexOf(cat) === index && cat !== '')
     )
   }, [selectedDoc, productDocResult])
