@@ -33,4 +33,26 @@ const SidebarButton = ({
   </Button>
 )
 
+export const PlainSidebarButton = ({
+  label,
+  onClick,
+  active,
+  ...rest
+}: {
+  onClick: () => void
+  label: string
+  active: boolean
+}) => (
+  <Button plain onClick={onClick} {...rest}>
+    {({ hover }: { hover: boolean }) => (
+      <Box
+        background={hover || active ? 'accent-1' : undefined}
+        pad={{ horizontal: 'large', vertical: 'medium' }}
+      >
+        <Text size="large">{label}</Text>
+      </Box>
+    )}
+  </Button>
+)
+
 export default withRouter(SidebarButton)

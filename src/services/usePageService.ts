@@ -84,6 +84,7 @@ const useAllDocumentsService = (
   return result
 }
 
+// #TODO: it'd be nice to pass thru generic T type like Page or OrderDoc etc, maybe?
 const useDocumentService = (collection: string, id: string | undefined) => {
   const [result, setResult] = useState<Service<Page>>({
     status: 'loading'

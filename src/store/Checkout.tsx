@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import CheckoutInformationForm from '../components/CheckoutInformationForm'
 import { useCartDocService, emptyCart } from '../services/useCartService'
-import { useOrderService } from '../services/useOrderService'
+import { useOrderPutService } from '../services/useOrderService'
 import { PartialOrderDoc } from '../types/Order'
 import Loading from '../components/Loading'
 
@@ -23,7 +23,7 @@ function Checkout() {
   const [loading, setLoading] = useState(false)
   const [submitFailText, setSubmitFailText] = useState('')
   const [complete, setComplete] = useState(false)
-  const orderDoc = useOrderService(order, doSave, (rev: string) => {
+  const orderDoc = useOrderPutService(order, doSave, (rev: string) => {
     console.log('update rev:', rev)
     setComplete(true)
   })

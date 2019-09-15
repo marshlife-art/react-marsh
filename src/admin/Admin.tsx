@@ -8,7 +8,7 @@ import { StyledLink } from '../components/StyledLink'
 import UserMenu from '../components/UserMenu'
 import { Dashboard } from './Dashboard'
 import { AdminProducts } from './products/AdminProducts'
-import { AdminOrders } from './AdminOrders'
+import { AdminOrders } from './orders/AdminOrders'
 
 function Admin() {
   return (
