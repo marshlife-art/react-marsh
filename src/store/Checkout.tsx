@@ -3,7 +3,7 @@ import { Tabs, Tab, Box, Heading, Text, Button } from 'grommet'
 import styled from 'styled-components'
 
 import CheckoutInformationForm from '../components/CheckoutInformationForm'
-import { useCartDocService } from '../services/useCartService'
+import { useCartDocService, emptyCart } from '../services/useCartService'
 import { useOrderService } from '../services/useOrderService'
 import { PartialOrderDoc } from '../types/Order'
 import Loading from '../components/Loading'
@@ -28,11 +28,11 @@ function Checkout() {
     setComplete(true)
   })
 
-  const STEPS = 3
+  const STEPS = 2
   const [index, setIndex] = useState(0)
 
   const onActive = (nextIndex: number) => setIndex(nextIndex)
-  const next = () => setIndex(index + 1 < STEPS ? index + 1 : 2)
+  const next = () => setIndex(index + 1 < STEPS ? index + 1 : STEPS - 1)
 
   useEffect(() => {
     if (!order || orderDoc.status !== 'loaded' || !orderDoc.payload) {
@@ -72,6 +72,7 @@ function Checkout() {
         console.log('Success:', JSON.stringify(response))
         if (response['ok']) {
           setComplete(true)
+          emptyCart()
         } else {
           setSubmitFailText('onoz! not ok...')
         }
@@ -98,7 +99,7 @@ function Checkout() {
               />
             </Box>
           </Tab>
-          <Tab title="Payment">
+          {/* <Tab title="Payment">
             <Box margin={{ top: 'medium' }} pad={{ horizontal: 'small' }}>
               pay pay pay
               <Box
@@ -117,12 +118,11 @@ function Checkout() {
                 />
               </Box>
             </Box>
-          </Tab>
+          </Tab> */}
           <Tab title="Confirm">
             <Box margin={{ top: 'medium' }} pad={{ horizontal: 'small' }}>
               {!complete && (
                 <>
-                  <Text>confirm confirm confirm</Text>
                   {cartDocs.status === 'loaded' && cartDocs.payload.line_items && (
                     <Box direction="column" pad={{ right: 'medium' }}>
                       <Text>Total</Text>

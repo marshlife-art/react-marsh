@@ -20,24 +20,11 @@ interface CheckoutInformationFromProps {
 }
 
 function CheckoutInformationForm(props: CheckoutInformationFromProps) {
-  const [name, setName] = useState<string | undefined>('test testing')
-  const [email, setEmail] = useState<string | undefined>('zomg@example.com')
-  const [phone, setPhone] = useState<string>('6669996969')
-  const [address, setAddress] = useState<string | undefined>(
-    '666 devel dr.\nny,ny\n66666'
-  )
-  const [notes, setNotes] = useState<string | undefined>(
-    encodeURIComponent(`
-   {\__/} 
-  ( • . •)      
-  / >💻 		yea, I can build that for u. 
-  
-  
-   {\__/}   
-  ( • - •)     
-   💻< \  	wait, wutz the deadline?
-`)
-  )
+  const [name, setName] = useState<string | undefined>('')
+  const [email, setEmail] = useState<string | undefined>('')
+  const [phone, setPhone] = useState<string>('')
+  const [address, setAddress] = useState<string | undefined>()
+  const [notes, setNotes] = useState<string | undefined>()
 
   const { order } = props
   useEffect(() => {
@@ -46,7 +33,7 @@ function CheckoutInformationForm(props: CheckoutInformationFromProps) {
       order.email && setEmail(order.email)
       order.phone && order.phone && setPhone(order.phone)
       order.address && setAddress(order.address)
-      order.notes && setNotes(encodeURIComponent(order.notes))
+      order.notes && setNotes(encodeURIComponent(order.notes)) // oh stringz :/
     }
   }, [order])
 

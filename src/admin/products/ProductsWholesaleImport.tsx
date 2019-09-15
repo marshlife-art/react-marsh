@@ -86,6 +86,7 @@ function ProductsWholesaleImport() {
   // const [uintPriceMultiplier, setUnitPriceMultiplier] = useState(0.00)
 
   function setProductMapForKey(key: keyof ProductMap, value: number[]) {
+    // add things to the productMap object one key-at-a-time
     setProductMap({ ...productMap, ...{ [key]: value } })
   }
 
@@ -224,6 +225,9 @@ function ProductsWholesaleImport() {
           header: allData.header
         }
       })
+
+      // #TODO: prolly a good time to also multiply price...
+
       // console.log('parsing done! mutAllData:', mutAllDataMeta)
       setAllData(prevAllData => ({ ...prevAllData, meta: mutAllDataMeta }))
     }
@@ -253,7 +257,7 @@ function ProductsWholesaleImport() {
 
   return (
     <Box fill style={{ minWidth: '450px' }}>
-      <Box
+      {/* <Box
         direction="row"
         align="center"
         as="header"
@@ -264,7 +268,7 @@ function ProductsWholesaleImport() {
         <Heading level={2} margin={{ left: 'medium' }}>
           ADD WHOLESALE PRODUCTS
         </Heading>
-      </Box>
+      </Box> */}
       <Box overflow="auto" style={{ display: 'block' }}>
         {step === 'upload' && (
           <Box pad="medium" gap="small" width="large">
