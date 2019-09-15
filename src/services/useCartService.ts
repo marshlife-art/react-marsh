@@ -4,6 +4,7 @@ import PouchDB from 'pouchdb'
 import { Service } from '../types/Service'
 import { CartDoc, LineItem } from '../types/Cart'
 import { productMapFn } from '../util/utilz'
+import { ProductMap } from '../types/Product'
 
 // const DB_URL = 'http://localhost:5984/'
 
@@ -50,7 +51,10 @@ const useCartDocService = () => {
   useEffect(() => {
     const db = new PouchDB('cart')
     db.get('cart')
-      .then(doc => setResult({ status: 'loaded', payload: doc as CartDoc }))
+      .then(doc => {
+        console.log('cart doc:', doc)
+        setResult({ status: 'loaded', payload: doc as CartDoc })
+      })
       .catch(error => {
         console.log('useCartService db.get error:', error)
         if (error.name === 'not_found') {
@@ -58,9 +62,10 @@ const useCartDocService = () => {
           db.put({ _id: 'cart' })
             .then(response => {
               db.get('cart')
-                .then(doc =>
+                .then(doc => {
+                  console.log('cart doc:', doc)
                   setResult({ status: 'loaded', payload: doc as CartDoc })
-                )
+                })
                 .catch(error =>
                   console.warn(
                     'useCartDocService get cart caught error:',
@@ -155,7 +160,7 @@ const useCartItemCount = () => {
   return itemCount
 }
 
-const addToCart = (row: string[]) => {
+const addToCart = (row: string[], productMap?: ProductMap) => {
   const db = new PouchDB('cart')
 
   console.log('[useCartService] addToCart row:', row)
@@ -169,7 +174,8 @@ const addToCart = (row: string[]) => {
             : 'CS',
         quantity: 1,
         price: parseFloat(productMapFn('price', row).replace('$', '')),
-        data: row
+        data: row,
+        product_map: productMap
       })
       db.put(cartDoc)
     })
@@ -211,14 +217,26 @@ const updateLineItem = (line_item: LineItem, idx: number) => {
           line_item.price = parseFloat(
             (
               line_item.quantity *
-              parseFloat(line_item.data[5].replace('$', ''))
+              parseFloat(
+                productMapFn(
+                  'price',
+                  line_item.data,
+                  line_item.product_map
+                ).replace('$', '')
+              )
             ).toFixed(2)
           )
         } else {
           line_item.price = parseFloat(
             (
               line_item.quantity *
-              parseFloat(line_item.data[6].replace('$', ''))
+              parseFloat(
+                productMapFn(
+                  'unit_price',
+                  line_item.data,
+                  line_item.product_map
+                ).replace('$', '')
+              )
             ).toFixed(2)
           )
         }

@@ -50,7 +50,13 @@ const Quantity = (props: { line_item: LineItem; idx: number }) => {
   }
 
   const hasUnitPrice =
-    props.line_item.data && props.line_item.data[5] !== props.line_item.data[6]
+    props.line_item.data &&
+    productMapFn('price', props.line_item.data, props.line_item.product_map) !==
+      productMapFn(
+        'unit_price',
+        props.line_item.data,
+        props.line_item.product_map
+      )
 
   return (
     <Box direction="row">
@@ -142,10 +148,14 @@ const CartMenu = (props: CartMenuProps & RouteComponentProps) => {
                   >
                     <Box direction="column" pad={{ right: 'small' }}>
                       <Text size="small" title="brand name">
-                        {productMapFn('name', row)}
+                        {productMapFn('name', row, line_item.product_map)}
                       </Text>
                       <Text size="medium" title="description">
-                        {productMapFn('description', row)}
+                        {productMapFn(
+                          'description',
+                          row,
+                          line_item.product_map
+                        )}
                       </Text>
                       <Box
                         direction="row"
@@ -154,16 +164,18 @@ const CartMenu = (props: CartMenuProps & RouteComponentProps) => {
                         height="24px"
                       >
                         <Text size="xsmall" title="package count">
-                          {productMapFn('pk', row)}ct.
+                          {productMapFn('pk', row, line_item.product_map)}ct.
                         </Text>
-                        {productPropMapFn(row).map((r, i) => {
-                          if (!r || /^\s*$/.test(r)) {
-                            // avoid blank stringz
-                            return null
-                          } else {
-                            return <ProductProperty key={r} property={r} />
+                        {productPropMapFn(row, line_item.product_map).map(
+                          (r, i) => {
+                            if (!r || /^\s*$/.test(r)) {
+                              // avoid blank stringz
+                              return null
+                            } else {
+                              return <ProductProperty key={r} property={r} />
+                            }
                           }
-                        })}
+                        )}
                       </Box>
                     </Box>
                     <Box
@@ -176,12 +188,20 @@ const CartMenu = (props: CartMenuProps & RouteComponentProps) => {
 
                       <ProductPriceAndUnit
                         hasUnitPrice={
-                          productMapFn('price', row) !==
-                          productMapFn('unit_price', row)
+                          productMapFn('price', row, line_item.product_map) !==
+                          productMapFn('unit_price', row, line_item.product_map)
                         }
-                        size={productMapFn('size', row)}
-                        unitPrice={productMapFn('unit_price', row)}
-                        price={productMapFn('price', row)}
+                        size={productMapFn('size', row, line_item.product_map)}
+                        unitPrice={productMapFn(
+                          'unit_price',
+                          row,
+                          line_item.product_map
+                        )}
+                        price={productMapFn(
+                          'price',
+                          row,
+                          line_item.product_map
+                        )}
                       />
                       <Button
                         icon={<Trash color="status-critical" />}

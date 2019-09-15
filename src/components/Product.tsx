@@ -76,13 +76,13 @@ export function Product(props: ProductProps) {
           />
         </Box>
 
-        <Box>
+        <Box align="center">
           <Box pad="small" direction="column">
             <Button
               plain={false}
               icon={<Cart />}
               onClick={() => {
-                addToCart(row)
+                addToCart(row, props.productMap)
                 setOnAddedMsg('Added!')
               }}
               disabled={props.preview}

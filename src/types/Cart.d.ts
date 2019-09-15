@@ -1,3 +1,5 @@
+import { ProductMap } from './Product'
+
 export type UnitType = 'CS' | 'EA'
 
 export interface LineItem {
@@ -5,6 +7,7 @@ export interface LineItem {
   quantity: number
   price: number
   data?: string[]
+  product_map?: ProductMap
 }
 
 export interface CartDoc {
