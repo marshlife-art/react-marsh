@@ -43,27 +43,31 @@ function StoreSearch(props: RouteComponentProps) {
       setLoading(true)
 
       window.setTimeout(() => {
-        wholesaleDocs.map(cat => {
-          const doc = cat.doc as ProductDoc
-          const _productMap = doc && doc.product_map
-          setProductMap(_productMap)
+        let resultz: string[][] = []
 
-          const resultz =
-            (doc &&
-              doc.data &&
-              doc.data.filter(row => {
-                const regex = new RegExp(q, 'i')
-                return regex.test(productMapFn('search', row, _productMap))
-              })) ||
-            []
+        for (let i = 0; i < wholesaleDocs.length; i++) {
+          const doc = wholesaleDocs[i].doc as ProductDoc
 
-          // console.log('resultz:', resultz)
-          setResults(prevResults => prevResults.concat(resultz))
-          if (resultz) {
-            setLoading(false)
+          if (doc && doc.data) {
+            const _productMap = doc && doc.product_map
+            setProductMap(_productMap)
+            const regex = new RegExp(q, 'i')
+
+            for (let j = 0; j < doc.data.length; j++) {
+              const search = productMapFn('search', doc.data[j], _productMap)
+              regex.test(search) && resultz.push(doc.data[j])
+              if (resultz.length > 500) {
+                break
+              }
+            } // end for
+
+            if (resultz.length > 500) {
+              break
+            }
           }
-          return false
-        })
+        } // end for
+
+        setResults(resultz)
         setLoading(false)
       }, 200)
     }
