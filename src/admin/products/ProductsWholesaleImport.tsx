@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Heading, Text, Button, TextInput } from 'grommet'
+import { Box, Heading, Text, Button } from 'grommet'
 import Papa from 'papaparse'
 import styled from 'styled-components'
 
@@ -81,9 +81,6 @@ function ProductsWholesaleImport() {
   const [randomProduct, setRandomProduct] = useState<string[]>()
 
   const [productMap, setProductMap] = useState<ProductMapPartial>(TEST_MAP)
-
-  const [priceMultiplier, setPriceMultiplier] = useState(0.1)
-  // const [uintPriceMultiplier, setUnitPriceMultiplier] = useState(0.00)
 
   function setProductMapForKey(key: keyof ProductMap, value: number[]) {
     // add things to the productMap object one key-at-a-time
@@ -226,8 +223,6 @@ function ProductsWholesaleImport() {
         }
       })
 
-      // #TODO: prolly a good time to also multiply price...
-
       // console.log('parsing done! mutAllData:', mutAllDataMeta)
       setAllData(prevAllData => ({ ...prevAllData, meta: mutAllDataMeta }))
     }
@@ -324,29 +319,6 @@ function ProductsWholesaleImport() {
                   key={`keymap${key}`}
                 >
                   <Text key={`keymap${key}`}>{key}</Text>
-
-                  {key === 'price' && (
-                    <Box
-                      direction="column"
-                      margin={{ horizontal: 'small' }}
-                      align="center"
-                    >
-                      <Text size="xsmall">multiplier</Text>
-                      <TextInput
-                        id="text-input"
-                        type="number"
-                        max="1"
-                        step="0.01"
-                        value={priceMultiplier}
-                        onChange={event =>
-                          setPriceMultiplier(parseFloat(event.target.value))
-                        }
-                        size="small"
-                        style={{ maxWidth: '70px' }}
-                      />
-                    </Box>
-                  )}
-
                   <ProductMapSelect
                     optz={
                       header && header.length

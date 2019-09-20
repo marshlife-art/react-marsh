@@ -8,8 +8,7 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-  TableBody,
-  TableFooter
+  TableBody
 } from 'grommet'
 import { base } from 'grommet/themes'
 import styled from 'styled-components'
@@ -175,7 +174,7 @@ function Orders(props: {
       ),
       header: (
         <CheckBox
-          checked={orders && checked.length === orders.length}
+          checked={orders.length > 0 && checked.length === orders.length}
           indeterminate={checked.length > 0 && checked.length < orders.length}
           onChange={onCheckAll}
         />

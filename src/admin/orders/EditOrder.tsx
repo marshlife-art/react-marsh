@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Text } from 'grommet'
+import { Text } from 'grommet'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import { useOrderDocService } from '../../services/useOrderService'
