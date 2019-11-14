@@ -8,7 +8,7 @@ import {
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { Grommet } from 'grommet'
-import { grommet } from 'grommet/themes'
+import { dark } from 'grommet/themes'
 
 import { RootState } from './redux'
 import { UserServiceProps } from './redux/session/reducers'
@@ -38,12 +38,13 @@ const App: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     console.log('userService fx:', userService)
-    !userService.isFetching && userService.user && setLoading(false)
+    // !userService.isFetching && userService.user && setLoading(false)
+    !userService.isFetching && setLoading(false)
   }, [userService])
 
   return (
     <Router>
-      <Grommet theme={grommet}>
+      <Grommet theme={dark}>
         {loading ? (
           <Loading />
         ) : (

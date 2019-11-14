@@ -1,37 +1,75 @@
 import React, { useEffect } from 'react'
-import { Box, Button, Form, FormField, Text } from 'grommet'
+import { Box, Button, Form, FormField, Text, Tab, Tabs } from 'grommet'
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
+import styled from 'styled-components'
 
 import { RootState } from '../redux'
-import { login } from '../redux/session/actions'
+import { login, register } from '../redux/session/actions'
 import { UserServiceProps } from '../redux/session/reducers'
+
+// this is kindof ugly :/
+const StyledTabs = styled(Tabs)`
+  div[class^='StyledTabs__StyledTabsHeader'] {
+    justify-content: space-around;
+  }
+`
 
 interface OwnProps {}
 
 interface DispatchProps {
-  login: (username: string, password: string) => void
+  login: (email: string, password: string) => void
+  register: (name: string, email: string, password: string) => void
 }
 
 type Props = UserServiceProps & OwnProps & DispatchProps & RouteComponentProps
 
 function Login(props: Props) {
   const doLogin = (event: React.FormEvent<HTMLFormElement>) => {
-    const usernameEl = event.currentTarget.elements.namedItem(
-      'username'
+    const emailEl = event.currentTarget.elements.namedItem(
+      'email'
     ) as HTMLInputElement
     const passwordEl = event.currentTarget.elements.namedItem(
       'password'
     ) as HTMLInputElement
 
     if (
-      usernameEl &&
-      usernameEl.value.length > 0 &&
+      emailEl &&
+      emailEl.value.length > 0 &&
       passwordEl &&
       passwordEl.value.length > 0
     ) {
-      props.login(usernameEl.value, passwordEl.value)
+      props.login(emailEl.value, passwordEl.value)
+    }
+  }
+
+  const doRegister = (event: React.FormEvent<HTMLFormElement>) => {
+    const nameEl = event.currentTarget.elements.namedItem(
+      'name'
+    ) as HTMLInputElement
+    const passwordEl = event.currentTarget.elements.namedItem(
+      'password'
+    ) as HTMLInputElement
+    const emailEl = event.currentTarget.elements.namedItem(
+      'email'
+    ) as HTMLInputElement
+
+    if (
+      nameEl &&
+      nameEl.value.length > 0 &&
+      emailEl &&
+      emailEl.value.length > 0 &&
+      passwordEl &&
+      passwordEl.value.length > 0
+    ) {
+      props.register(nameEl.value, emailEl.value, passwordEl.value)
+      console.log(
+        '[Login] #TODO register',
+        nameEl.value,
+        emailEl.value,
+        passwordEl.value
+      )
     }
   }
 
@@ -58,52 +96,112 @@ function Login(props: Props) {
   return (
     <Box align="center" justify="center" style={{ minHeight: '100vh' }}>
       <Box width="medium">
-        <Form onSubmit={doLogin}>
-          <FormField
-            label="username"
-            name="username"
-            type="text"
-            required
-            autoFocus
-          />
-          <FormField
-            label="password"
-            name="password"
-            type="password"
-            required
-          />
+        <StyledTabs>
+          <Tab title="Login">
+            <Form onSubmit={doLogin}>
+              <FormField
+                label="email"
+                name="email"
+                type="text"
+                required
+                autoFocus
+              />
+              <FormField
+                label="password"
+                name="password"
+                type="password"
+                required
+              />
 
-          <Box direction="row" justify="between" margin={{ top: 'medium' }}>
-            <Button
-              type="submit"
-              label="Login"
-              disabled={props.userService.isFetching}
-              primary
-            />
-          </Box>
+              <Box direction="row" justify="between" margin={{ top: 'medium' }}>
+                <Button
+                  type="submit"
+                  label="Login"
+                  disabled={props.userService.isFetching}
+                  primary
+                />
+              </Box>
 
-          <Box margin={{ top: 'medium' }}>
-            {props.userService.user && (
-              <Text
-                wordBreak="break-all"
-                style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}
-                color="status-success"
-              >
-                {props.userService.user.name}
-              </Text>
-            )}
+              <Box margin={{ top: 'medium' }}>
+                {props.userService.user && (
+                  <Text
+                    wordBreak="break-all"
+                    style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}
+                    color="status-success"
+                  >
+                    {props.userService.user.name}
+                  </Text>
+                )}
 
-            {props.userService.error && (
-              <Text
-                wordBreak="break-all"
-                style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}
-                color="status-critical"
-              >
-                {props.userService.error.reason}
-              </Text>
-            )}
-          </Box>
-        </Form>
+                {props.userService.error && (
+                  <Text
+                    wordBreak="break-all"
+                    style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}
+                    color="status-critical"
+                  >
+                    {props.userService.error.reason}
+                  </Text>
+                )}
+              </Box>
+            </Form>
+          </Tab>
+          <Tab title="Register">
+            <Form onSubmit={doRegister}>
+              <FormField
+                label="name"
+                name="name"
+                type="text"
+                required
+                autoFocus
+              />
+              <FormField label="email" name="email" type="email" required />
+              <FormField
+                label="password"
+                name="password"
+                type="password"
+                required
+              />
+
+              <FormField
+                label="confirm password"
+                name="password_confirm"
+                type="password"
+                required
+              />
+
+              <Box direction="row" justify="between" margin={{ top: 'medium' }}>
+                <Button
+                  type="submit"
+                  label="Register"
+                  disabled={props.userService.isFetching}
+                  primary
+                />
+              </Box>
+
+              <Box margin={{ top: 'medium' }}>
+                {props.userService.user && (
+                  <Text
+                    wordBreak="break-all"
+                    style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}
+                    color="status-success"
+                  >
+                    {props.userService.user.name}
+                  </Text>
+                )}
+
+                {props.userService.error && (
+                  <Text
+                    wordBreak="break-all"
+                    style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}
+                    color="status-critical"
+                  >
+                    {props.userService.error.reason}
+                  </Text>
+                )}
+              </Box>
+            </Form>
+          </Tab>
+        </StyledTabs>
       </Box>
     </Box>
   )
@@ -123,7 +221,9 @@ const mapDispatchToProps = (
   ownProps: OwnProps
 ): DispatchProps => {
   return {
-    login: (username, password) => dispatch(login(username, password))
+    login: (email, password) => dispatch(login(email, password)),
+    register: (name, password, email) =>
+      dispatch(register(name, password, email))
   }
 }
 

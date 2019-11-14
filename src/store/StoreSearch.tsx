@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { Box, InfiniteScroll, Heading } from 'grommet'
+import { Box, InfiniteScroll, Heading, Select } from 'grommet'
 import { useAllDocumentsService } from '../services/usePageService'
 import { ProductDoc } from '../types/Product'
 import { productMapFn } from '../util/utilz'
@@ -13,6 +13,9 @@ function StoreSearch(props: RouteComponentProps) {
   const [q, setQ] = useState(props.location.search.replace('?', ''))
   const [results, setResults] = useState<string[][]>([])
   const [loading, setLoading] = useState(false)
+  const [catz, setCatz] = useState<string[]>([])
+  // const [selectedCat, setSelectedCat] = useState<string>('')
+  const [subCatz, setSubCatz] = useState<Array<string[] | undefined>>([])
 
   useEffect(() => {
     const unListen = props.history.listen((location, action) => {
@@ -33,7 +36,33 @@ function StoreSearch(props: RouteComponentProps) {
 
   useEffect(() => {
     // console.log('[AdminProductsWholesale] allDocs:', allDocs)
-    allDocs.status === 'loaded' && setWholesaleDocs(allDocs.payload.rows)
+    if (allDocs.status === 'loaded') {
+      setWholesaleDocs(allDocs.payload.rows)
+
+      // #TODO: catz should probably be calculated on import... also <SearchBox/> needz the <Select/>
+      // need to just add any selected catz to the filter...
+      const _catz = allDocs.payload.rows.map(d => d.id)
+      setCatz(_catz)
+      console.log('_catz:', _catz)
+
+      // productDocResult.payload.data
+      //     .map(p =>
+      //       productMapFn('category', p, productDocResult.payload.product_map)
+      //     )
+      //     .filter((cat, index, arr) => arr.indexOf(cat) === index && cat !== '')
+      const _subCatz = allDocs.payload.rows.map(d => {
+        const doc = d.doc as ProductDoc
+        return (
+          doc.data &&
+          doc.data
+            .map(r => productMapFn('category', r, doc.product_map))
+            .filter((cat, index, arr) => cat && arr.indexOf(cat) === index)
+        )
+      })
+
+      console.log('_subCatz:', _subCatz)
+      setSubCatz(_subCatz)
+    }
   }, [allDocs])
 
   useEffect(() => {
@@ -43,6 +72,7 @@ function StoreSearch(props: RouteComponentProps) {
       setLoading(true)
 
       window.setTimeout(() => {
+        console.log('catz:', catz, ' subCatz:', subCatz)
         let resultz: string[][] = []
 
         for (let i = 0; i < wholesaleDocs.length; i++) {
@@ -67,6 +97,7 @@ function StoreSearch(props: RouteComponentProps) {
           }
         } // end for
 
+        // SORT resultz ?
         setResults(resultz)
         setLoading(false)
       }, 200)

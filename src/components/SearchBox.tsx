@@ -5,6 +5,9 @@ import { Search, Close } from 'grommet-icons'
 import { base } from 'grommet/themes'
 import styled from 'styled-components'
 import { StickyBox } from './StickyBox'
+import queryString from 'query-string'
+
+// todo query-params
 
 const SearchBoxWrapper = styled(Box)`
   position: sticky;
@@ -14,7 +17,10 @@ const SearchBoxWrapper = styled(Box)`
 `
 
 function SearchInput(props: RouteComponentProps) {
+  // #todo use query-paramz
   const [q, setQ] = useState(props.history.location.search.replace('?', ''))
+
+  // queryString.parse(props.history.location.search)["q"]
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setQ(event.target.value)
@@ -23,6 +29,7 @@ function SearchInput(props: RouteComponentProps) {
     if (event.key === 'Enter') {
       if (q.trim().length) {
         props.history.push({ pathname: '/store/search', search: q })
+        // queryString.stringify
       }
     }
   }
