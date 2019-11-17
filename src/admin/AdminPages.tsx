@@ -4,7 +4,7 @@ import { Box, Button, Heading } from 'grommet'
 import { Page } from '../types/Page'
 import {
   useAllDocumentsService,
-  useDocumentService,
+  usePageService,
   useDocumentPutService
 } from '../services/usePageService'
 import { Add } from 'grommet-icons'
@@ -63,7 +63,7 @@ function AdminPagesSidenav(props: {
 function AdminPages() {
   const [selectedDocID, setSelectedDocID] = useState<string>()
 
-  const doc = useDocumentService('pages', selectedDocID)
+  const doc = usePageService(selectedDocID, () => {})
 
   const [selectedPage, setSelectedPage] = useState<Page>()
 

@@ -81,7 +81,7 @@ function Login(props: Props) {
       !userService.isFetching &&
       userService.user.name &&
       userService.user.roles &&
-      userService.user.roles.includes('_admin')
+      userService.user.roles.includes('admin')
     ) {
       history.push('/admin')
     } else if (
@@ -227,7 +227,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(Login))
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Login))

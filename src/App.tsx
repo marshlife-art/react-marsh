@@ -54,7 +54,7 @@ const App: React.FC<Props> = (props: Props) => {
             <Route exact path="/login" component={Login} />
             {props.userService.user &&
             props.userService.user.roles &&
-            props.userService.user.roles.includes('_admin') ? (
+            props.userService.user.roles.includes('admin') ? (
               <Route path="/admin" component={Admin} />
             ) : (
               <Redirect from="/admin" to="/login" />
@@ -80,7 +80,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App)

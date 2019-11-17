@@ -46,7 +46,7 @@ const UserMenu = (props: UserMenuProps & UserServiceProps & DispatchProps) => {
       {props.userService.user && props.userService.user.name ? (
         <>
           {props.userService.user.roles &&
-            props.userService.user.roles.includes('_admin') && (
+            props.userService.user.roles.includes('admin') && (
               <UserMenuLink to="/admin" label="admin" />
             )}
           <UserMenuLink to="/" onClick={() => props.logout()} label="logout" />
@@ -72,7 +72,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(UserMenu)
+export default connect(mapStateToProps, mapDispatchToProps)(UserMenu)

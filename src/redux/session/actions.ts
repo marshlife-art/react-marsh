@@ -5,6 +5,7 @@ import { User, LoginError } from '../../types/User'
 
 import PouchDB from 'pouchdb'
 import PouchAuth from 'pouchdb-authentication'
+import { reject } from 'q'
 
 PouchDB.plugin(PouchAuth)
 
@@ -45,21 +46,33 @@ export const checkSession = (): ThunkAction<
     return new Promise<void>((resolve, rject) => {
       dispatch(isFetching(true))
 
-      fetch(`${API_HOST}/check_session`)
+      // #TODO: store & fetch token from local storage.
+      const token = localStorage && localStorage.getItem('token')
+
+      if (!token) {
+        reject()
+        return
+      }
+      fetch(`${API_HOST}/check_session`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
         .then(response => response.json())
         .then(response => {
           console.log('check_session', response)
-          if (response.msg === 'ok' && response.token) {
-            dispatch(
-              set({ name: 'name', email: 'e@m.ail', token: response.token })
-            )
+          if (response.msg === 'ok') {
+            console.log('check_session response OK!')
+            // dispatch(
+            //   set({ name: 'name', email: 'e@m.ail', token: response.token })
+            // )
           } else {
-            dispatch(set({ name: undefined, email: undefined }))
+            dispatch(
+              set({ name: undefined, email: undefined, token: undefined })
+            )
           }
         })
         .catch(err => {
           console.warn('check_session caught err:', err)
-          dispatch(set({ name: undefined }))
+          dispatch(set({ name: undefined, email: undefined, token: undefined }))
         })
         .finally(() => {
           dispatch(isFetching(false))
@@ -122,7 +135,8 @@ export const login = (
         .then(response => response.json())
         .then(response => {
           console.log('[session/actions] user login', response)
-          if (response.msg === 'ok' && response.user) {
+          if (response.msg === 'ok' && response.user && response.user.token) {
+            localStorage && localStorage.setItem('token', response.user.token)
             dispatch(set(response.user))
           } else {
             dispatch(setError({ error: 'error', reason: response.message }))
@@ -140,7 +154,7 @@ export const logout = (): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>): Promise<void> => {
     return new Promise<void>(resolve => {
       dispatch(isFetching(true))
-
+      localStorage && localStorage.removeItem('token')
       dispatch(isFetching(false))
       resolve()
     })

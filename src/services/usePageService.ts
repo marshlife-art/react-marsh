@@ -6,9 +6,12 @@ import { Page } from '../types/Page'
 
 const DB_URL = 'http://localhost:5984/'
 
-const PAGES_DB = 'pages'
+const API_HOST = 'http://localhost:3000'
 
-const usePageService = (slug: string, setLoading: (value: boolean) => void) => {
+const usePageService = (
+  slug: string | undefined,
+  setLoading: (value: boolean) => void
+) => {
   const [result, setResult] = useState<Service<Page>>({
     status: 'loading'
   })
@@ -18,13 +21,27 @@ const usePageService = (slug: string, setLoading: (value: boolean) => void) => {
       setLoading(false)
       return
     }
-    const db = new PouchDB(DB_URL + PAGES_DB, {
-      skip_setup: true
-    })
-    db.get(slug)
-      .then(doc => setResult({ status: 'loaded', payload: doc as Page }))
-      .catch(error => setResult({ ...error }))
-      .finally(() => setLoading(false))
+    // const db = new PouchDB(DB_URL + PAGES_DB, {
+    //   skip_setup: true
+    // })
+    // db.get(slug)
+    //   .then(doc => setResult({ status: 'loaded', payload: doc as Page }))
+    //   .catch(error => setResult({ ...error }))
+    //   .finally(() => setLoading(false))
+
+    fetch(`${API_HOST}/page?slug=${slug}`)
+      .then(response => response.json())
+      .then(response => {
+        console.log('page', response)
+        setResult({ status: 'loaded', payload: response as Page })
+      })
+      .catch(error => {
+        console.warn('usePageService fetch caught err:', error)
+        setResult({ ...error })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [slug, setLoading])
 
   return result
@@ -85,44 +102,44 @@ const useAllDocumentsService = (
 }
 
 // #TODO: it'd be nice to pass thru generic T type like Page or OrderDoc etc, maybe?
-const useDocumentService = (collection: string, id: string | undefined) => {
-  const [result, setResult] = useState<Service<Page>>({
-    status: 'loading'
-  })
+// const useDocumentService = (collection: string, id: string | undefined) => {
+//   const [result, setResult] = useState<Service<Page>>({
+//     status: 'loading'
+//   })
 
-  useEffect(() => {
-    if (!collection || collection.length === 0 || !id || id.length === 0) {
-      return
-    }
-    const db = new PouchDB(DB_URL + collection, {
-      skip_setup: true
-    })
-    db.get(id)
-      .then(doc => setResult({ status: 'loaded', payload: doc as Page }))
-      .catch(error => {
-        console.log('useDocumentService db.get error:', error)
-        if (error.name === 'not_found') {
-          console.log('BUT! try harder...')
-          db.put({ _id: id, content: '' })
-            .then(response =>
-              setResult({
-                status: 'loaded',
-                payload: {
-                  _id: response.id,
-                  _rev: response.rev,
-                  content: ''
-                } as Page
-              })
-            )
-            .catch(error => setResult({ ...error }))
-        } else {
-          setResult({ ...error })
-        }
-      })
-  }, [collection, id])
+//   useEffect(() => {
+//     if (!collection || collection.length === 0 || !id || id.length === 0) {
+//       return
+//     }
+//     const db = new PouchDB(DB_URL + collection, {
+//       skip_setup: true
+//     })
+//     db.get(id)
+//       .then(doc => setResult({ status: 'loaded', payload: doc as Page }))
+//       .catch(error => {
+//         console.log('useDocumentService db.get error:', error)
+//         if (error.name === 'not_found') {
+//           console.log('BUT! try harder...')
+//           db.put({ _id: id, content: '' })
+//             .then(response =>
+//               setResult({
+//                 status: 'loaded',
+//                 payload: {
+//                   _id: response.id,
+//                   _rev: response.rev,
+//                   content: ''
+//                 } as Page
+//               })
+//             )
+//             .catch(error => setResult({ ...error }))
+//         } else {
+//           setResult({ ...error })
+//         }
+//       })
+//   }, [collection, id])
 
-  return result
-}
+//   return result
+// }
 
 const useDocumentPutService = (
   collection: string,
@@ -153,9 +170,4 @@ const useDocumentPutService = (
   return result
 }
 
-export {
-  usePageService,
-  useAllDocumentsService,
-  useDocumentService,
-  useDocumentPutService
-}
+export { usePageService, useAllDocumentsService, useDocumentPutService }
