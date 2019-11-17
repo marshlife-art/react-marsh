@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "grommet": "^2.7.8",
-    "grommet-icons": "^4.3.0",
+    "grommet": "^2.8.0",
+    "grommet-icons": "^4.4.0",
     "papaparse": "^5.0.2",
     "pouchdb": "^7.1.1",
     "pouchdb-authentication": "^1.1.3",

@@ -13,7 +13,9 @@ const SearchBoxWrapper = styled(Box)`
   position: sticky;
   top: 0;
   z-index: 3;
-  background: ${base.global.colors.white};
+  background: ${base.global && base.global.colors
+    ? base.global.colors.white
+    : 'white'};
 `
 
 function SearchInput(props: RouteComponentProps) {

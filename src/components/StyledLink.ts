@@ -6,7 +6,8 @@ import { Colors } from '../types/GrommetColors'
 
 export const StyledLink = styled(Link)`
   text-decoration: none;
-  color: ${(props: { color: Colors }) => base.global.colors[props.color]};
+  color: ${(props: { color: Colors }) =>
+    base.global && base.global.colors && base.global.colors[props.color]};
   &:hover {
     text-decoration: underline;
   }

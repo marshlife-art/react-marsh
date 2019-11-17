@@ -23,7 +23,9 @@ const StyledDataTable = styled(DataTable)`
     position: absolute;
     top: 5px;
     z-index: 3;
-    background: ${base.global.colors.white};
+    background: ${base.global && base.global.colors
+      ? base.global.colors.white
+      : 'white'};
   }
 `
 

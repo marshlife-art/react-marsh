@@ -37,7 +37,7 @@ function CheckoutInformationForm(props: CheckoutInformationFromProps) {
     }
   }, [order])
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function onSubmit(event: React.FormEvent<Element>) {
     const { setOrder, next } = props
     // setOrder( (prevOrder:PartialOrderDoc) => ({ ...prevOrder, name, email, phone, address, notes }) )
     setOrder(prevOrder => ({

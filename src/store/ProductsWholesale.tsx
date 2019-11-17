@@ -14,7 +14,9 @@ import { productMapFn } from '../util/utilz'
 // import { useCartPutService } from '../services/useCartService';
 
 const BreadCrumb = styled(Text)`
-  background: ${base.global.colors.white};
+  background: ${base.global && base.global.colors
+    ? base.global.colors.white
+    : 'white'};
   &:hover {
     cursor: pointer;
     text-decoration: underline;
@@ -27,7 +29,9 @@ const BreadCrumb = styled(Text)`
 const BreadCrumbBox = styled(Box)<{ top?: string }>`
   position: sticky;
   top: ${props => props.top || 0};
-  background: ${base.global.colors.white};
+  background: ${base.global && base.global.colors
+    ? base.global.colors.white
+    : 'white'};
   z-index: 1;
 `
 
@@ -156,26 +160,25 @@ function ProductsWholesale(props: RouteComponentProps) {
       {selectedDoc && productDocResult.status === 'loading' && <Loading />}
       {selectedDoc &&
         !selectedCat &&
-        (productDocResult.status === 'loaded' &&
-          productDocResult.payload.data && (
-            <Box width="auto" alignSelf="center">
-              {categories.map((cat, i) => (
-                <Box
-                  key={`row${i}`}
-                  pad={{ horizontal: 'medium', bottom: 'small' }}
-                >
-                  <Button
-                    fill
-                    color="dark-1"
-                    onClick={() => setSelectedCat(cat)}
-                    hoverIndicator
-                    style={{ textTransform: 'uppercase' }}
-                    label={cat}
-                  />
-                </Box>
-              ))}
-            </Box>
-          ))}
+        productDocResult.status === 'loaded' && productDocResult.payload.data && (
+          <Box width="auto" alignSelf="center">
+            {categories.map((cat, i) => (
+              <Box
+                key={`row${i}`}
+                pad={{ horizontal: 'medium', bottom: 'small' }}
+              >
+                <Button
+                  fill
+                  color="dark-1"
+                  onClick={() => setSelectedCat(cat)}
+                  hoverIndicator
+                  style={{ textTransform: 'uppercase' }}
+                  label={cat}
+                />
+              </Box>
+            ))}
+          </Box>
+        )}
 
       {selectedDoc && selectedCat && (
         <ProductsStore {...{ selectedCat, productDocResult }} />

@@ -26,13 +26,12 @@ interface DispatchProps {
 type Props = UserServiceProps & OwnProps & DispatchProps & RouteComponentProps
 
 function Login(props: Props) {
-  const doLogin = (event: React.FormEvent<HTMLFormElement>) => {
-    const emailEl = event.currentTarget.elements.namedItem(
-      'email'
-    ) as HTMLInputElement
-    const passwordEl = event.currentTarget.elements.namedItem(
-      'password'
-    ) as HTMLInputElement
+  // (JSX attribute) onSubmit?: (((...args: any[]) => any) & ((event: React.FormEvent<HTMLFormElement>) => void)) | undefined
+
+  const doLogin = (event: React.FormEvent) => {
+    const target = event.currentTarget as HTMLFormElement
+    const emailEl = target.elements.namedItem('email') as HTMLInputElement
+    const passwordEl = target.elements.namedItem('password') as HTMLInputElement
 
     if (
       emailEl &&
@@ -44,16 +43,11 @@ function Login(props: Props) {
     }
   }
 
-  const doRegister = (event: React.FormEvent<HTMLFormElement>) => {
-    const nameEl = event.currentTarget.elements.namedItem(
-      'name'
-    ) as HTMLInputElement
-    const passwordEl = event.currentTarget.elements.namedItem(
-      'password'
-    ) as HTMLInputElement
-    const emailEl = event.currentTarget.elements.namedItem(
-      'email'
-    ) as HTMLInputElement
+  const doRegister = (event: React.FormEvent) => {
+    const target = event.currentTarget as HTMLFormElement
+    const nameEl = target.elements.namedItem('name') as HTMLInputElement
+    const passwordEl = target.elements.namedItem('password') as HTMLInputElement
+    const emailEl = target.elements.namedItem('email') as HTMLInputElement
 
     if (
       nameEl &&
