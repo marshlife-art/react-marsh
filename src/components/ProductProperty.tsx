@@ -13,7 +13,7 @@ const PROPERTY_MAP: { [index: string]: string } = {
   og: 'Organic',
   r: 'Refined sugar',
   v: 'Vegan',
-  w: 'Yeast free',
+  w: 'Wheat free',
   ft: 'Fair Trade',
   n: 'Natural',
   s: 'Specialty Only',

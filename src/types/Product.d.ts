@@ -1,3 +1,19 @@
+export interface Product {
+  unf: string
+  upc_code: string
+  category: string
+  sub_category: string
+  name: string
+  description: string
+  pk: number
+  size: string
+  unit_type: string
+  ws_price: number
+  u_price: number
+  codes: string
+}
+
+// #TODO: yank this pouch-related stuff
 export interface ProductMap {
   name: number[]
   description: number[]

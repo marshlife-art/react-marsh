@@ -5,7 +5,7 @@ import { Gremlin } from 'grommet-icons'
 import styled from 'styled-components'
 
 import Checkout from './Checkout'
-import ProductsWholesale from './ProductsWholesale'
+import Products from './Products'
 import { StyledLink } from '../components/StyledLink'
 import SearchBox from '../components/SearchBox'
 import CartButton from '../components/CartButton'
@@ -73,7 +73,7 @@ function Store() {
 
       <Box justify="center" align="center" fill>
         <Switch>
-          <Route exact path="/store" component={ProductsWholesale} />
+          <Route exact path="/store" component={Products} />
           <Route exact path="/store/checkout" component={Checkout} />
           <Route exact path="/store/search" component={StoreSearch} />
         </Switch>
